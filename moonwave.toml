@@ -1,6 +1,0 @@
-[home]
-enabled = true
-includeReadme = false
-
-[docusaurus]
-tagline = "Easily bridge client-server communication"
