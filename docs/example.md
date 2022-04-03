@@ -26,11 +26,11 @@ return RandomService
 **game.ServerStorage.Services.PointsService.lua:**
 
 ```lua
-local ReplicatedStorage = game:GetService(script.Name)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local Bridge = require(ReplicatedStorage.Bridge)
-local PointsService = Bridge.newService("PointsService")
+local PointsService = Bridge.newService(script.Name)
 
 function PointsService:Construct()
     self.PlayerPoints = {}
@@ -83,7 +83,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 local Bridge = require(ReplicatedStorage.Bridge)
 
-for _, Service in pairs(ServerStorage.Services:GetChildren()) dp
+for _, Service in pairs(ServerStorage.Services:GetChildren()) do
     require(Service)
 end
 
@@ -140,7 +140,7 @@ return OtherController
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Bridge = require(ReplicatedStorage.Bridge)
 
-for _, Controller in pairs(ReplicatedStorage.Controllers:GetChildren()) dp
+for _, Controller in pairs(ReplicatedStorage.Controllers:GetChildren()) do
     require(Controller)
 end
 
@@ -149,5 +149,5 @@ Bridge.addGlobalInboundMiddleware(function(controllerName, methodName, args)
     return args
 end)
 
-Bridge.Deploy(true)
+Bridge.deploy(true)
 ```
