@@ -1,3 +1,7 @@
+---
+sidebar_position: 1
+---
+
 # About
 
 Bridge is a [Roblox](https://roblox.com/) game framework based on server-controller architecture.

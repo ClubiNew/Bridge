@@ -1,3 +1,7 @@
+---
+sidebar_position: 2
+---
+
 # Installation
 
 **Option 1:** Copy the source files directly from the [GitHub Repository](https://github.com/Minstrix/Bridge) into your [Rojo](https://github.com/rojo-rbx/rojo) project.
