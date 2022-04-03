@@ -1,0 +1,7 @@
+[package]
+name = "minstrix/bridge"
+version = "0.1.2"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+license = "MIT"
+authors = ["Minstrix <minstrix@outlook.com>"]
