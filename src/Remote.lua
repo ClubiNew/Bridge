@@ -1,6 +1,15 @@
 --[=[
     @class Remote
-    Remotes allow you to send signals from the server to the client.
+    Remotes allow you to send signals from the server to the client. They can be created in the bridge of a service, for example:
+    ```lua
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    local Bridge = require(ReplicatedStorage.Bridge)
+
+    local SomeService = Bridge.newService(script.Name)
+    SomeService.Bridge.SomeRemote = Bridge.newRemote()
+
+    return SomeService
+    ```
 ]=]
 local Remote = {}
 Remote.__index = Remote

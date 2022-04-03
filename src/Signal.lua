@@ -1,6 +1,15 @@
 --[=[
     @class Signal
-    Signals allow you to send events in-between controllers or signals.
+    Signals allow you to send events in-between controllers or signals, but not from services to controllers or vice-versa. They can be created using `Bridge.newSignal()`, for example:
+    ```lua
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    local Bridge = require(ReplicatedStorage.Bridge)
+
+    local SomeController = Bridge.newController(script.Name)
+    SomeController.SomeSignal = Bridge.newSignal()
+
+    return SomeController
+    ```
 ]=]
 local Signal = {}
 Signal.__index = Signal

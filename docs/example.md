@@ -87,7 +87,7 @@ for _, Service in pairs(ServerStorage.Services:GetChildren()) dp
     require(Service)
 end
 
-Bridge.Deploy(true)
+Bridge.deploy(true)
 ```
 
 **game.ReplicatedStorage.Controllers.PointsController.lua:**
@@ -101,8 +101,10 @@ local PointsService = Bridge.toService("PointsService")
 
 function PointsController:Construct()
     self.Points = PointsService:GetPoints()
+    self.Updated = Bridge.newSignal()
     PointsService.PointsChanged:Connect(function(newPoints)
         self.Points = newPoints
+        self.Updated:Fire(newPoints)
     end)
 end
 
@@ -124,6 +126,9 @@ local OtherController = Bridge.newController(script.Name)
 function OtherController:Deploy()
     local PointsController = Bridge.toController("PointsController")
     print(PointsController:GetPoints())
+    PointsController.Updated:Connect(function(newPoints)
+        print(newPoints)
+    end)
 end
 
 return OtherController
