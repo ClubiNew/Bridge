@@ -291,27 +291,28 @@ function Bridge.deploy(verbose: boolean?)
                 for methodName, method in pairs(value) do
                     if typeof(method) == "function" then
                         local func = function(...)
-                            local args = runMiddleware(GlobalInboundMiddleware, "inbound", serviceName, methodName, table.pack(...))
+                            local serviceNameBridge = serviceName .. "'s Bridge"
+                            local args = runMiddleware(GlobalInboundMiddleware, "inbound", serviceNameBridge, methodName, table.pack(...))
 
                             if Service.MiddlewarePriority == Bridge.MiddlewarePriorities.UniversalFirst then
-                                args = runMiddleware(Service.InboundMiddleware.Universal, "inbound", serviceName, methodName, args)
-                                args = runMiddleware(Service.InboundMiddleware.Client, "inbound", serviceName, methodName, args)
+                                args = runMiddleware(Service.InboundMiddleware.Universal, "inbound", serviceNameBridge, methodName, args)
+                                args = runMiddleware(Service.InboundMiddleware.Client, "inbound", serviceNameBridge, methodName, args)
                             else
-                                args = runMiddleware(Service.InboundMiddleware.Client, "inbound", serviceName, methodName, args)
-                                args = runMiddleware(Service.InboundMiddleware.Universal, "inbound", serviceName, methodName, args)
+                                args = runMiddleware(Service.InboundMiddleware.Client, "inbound", serviceNameBridge, methodName, args)
+                                args = runMiddleware(Service.InboundMiddleware.Universal, "inbound", serviceNameBridge, methodName, args)
                             end
 
                             local result = table.pack(method(Service.Service, table.unpack(args)))
 
                             if Service.MiddlewarePriority == Bridge.MiddlewarePriorities.UniversalFirst then
-                                result = runMiddleware(Service.OutboundMiddleware.Universal, "outbound", serviceName, index, result)
-                                result = runMiddleware(Service.OutboundMiddleware.Client, "outbound", serviceName, index, result)
+                                result = runMiddleware(Service.OutboundMiddleware.Universal, "outbound", serviceNameBridge, methodName, result)
+                                result = runMiddleware(Service.OutboundMiddleware.Client, "outbound", serviceNameBridge, methodName, result)
                             else
-                                result = runMiddleware(Service.OutboundMiddleware.Client, "outbound", serviceName, index, result)
-                                result = runMiddleware(Service.OutboundMiddleware.Universal, "outbound", serviceName, index, result)
+                                result = runMiddleware(Service.OutboundMiddleware.Client, "outbound", serviceNameBridge, methodName, result)
+                                result = runMiddleware(Service.OutboundMiddleware.Universal, "outbound", serviceNameBridge, methodName, result)
                             end
 
-                            result = runMiddleware(GlobalOutboundMiddleware, "outbound", serviceName, index, result)
+                            result = runMiddleware(GlobalOutboundMiddleware, "outbound", serviceNameBridge, methodName, result)
 
                             return table.unpack(result)
                         end
