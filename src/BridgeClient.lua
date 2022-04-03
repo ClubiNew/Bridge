@@ -30,8 +30,8 @@ local isDeployed = false
 --[=[
     @interface Controller
     @within BridgeClient
-    .Construct function
-    .Deploy function
+    .Construct function?
+    .Deploy function?
     .... Signal | function | any
     The construct function is run during deployment for each service asynchronously. The deploy function is run during deployment for all services synchronously. It is safe to access other services after the construct function has run.
 ]=]
