@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # About
 
-Bridge is a [Roblox](https://roblox.com/) game framework based on server-controller architecture.
+Bridge is a [Roblox](https://roblox.com/) game framework based on service-controller architecture.
 
 Documentation is work-in-progress as Bridge is in an early development phase.
 
