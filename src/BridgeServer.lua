@@ -47,7 +47,7 @@ local Bridge = {
 --[=[
     @type MiddlewarePriority userdata
     @within BridgeServer
-    One of `BridgeServer.MiddlewarePriorities`. Use `UniversalFirst` to have universal middleware run before client/server middleware and `UniversalLast` to have client/server middleware run before universal middleware.
+    One of `BridgeServer.MiddlewarePriorities`. Use `UniversalFirst` to have universal middleware run before client/server middleware and `UniversalLast` to have client/server middleware run before universal middleware. Defaults to `UniversalFirst` if not specified.
 ]=]
 
 local Services = {}
