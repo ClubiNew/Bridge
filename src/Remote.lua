@@ -32,6 +32,7 @@ Remote.__index = Remote
     @function new
     @within Remote
     @private
+    @server
     @return Remote
 ]=]
 function Remote.new()
@@ -46,6 +47,7 @@ end
     @within Remote
     @param remote table
     @return boolean
+    @private
     Returns `true` if the passed table is a Remote.
 ]=]
 function Remote.Is(remote)
@@ -57,6 +59,7 @@ end
     @within Remote
     @param Player Player
     @param ... any
+    @server
     Fire the remote for the given player and any server scripts connected to the remote with the given arguments.
 ]=]
 function Remote:FireClient(Player: Player, ...)
@@ -70,6 +73,7 @@ end
     @method FireAllClients
     @within Remote
     @param ... any
+    @server
     Fire the remote for all players and any server scripts connected to the remote with the given arguments.
 ]=]
 function Remote:FireAllClients(...)

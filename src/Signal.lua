@@ -38,6 +38,7 @@ end
     @within Signal
     @param signal table
     @return boolean
+    @private
     Returns `true` if the passed table is a Signal.
 ]=]
 function Signal.Is(signal)
