@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[991],{97868:function(s){s.exports=JSON.parse('{"sourceUrl":"https://github.com/Minstrix/Bridge/blob/master","baseUrl":"/Bridge/","classOrder":[],"apiCategories":[]}')}}]);
