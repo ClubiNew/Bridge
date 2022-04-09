@@ -1,0 +1,28 @@
+name: Deploy docs to GitHub Pages
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    deploy:
+        name: Deploy to GitHub Pages
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@main
+            - name: Create Node Environment
+              uses: actions/setup-node@v1
+              with:
+                  node-version: 10.x
+            - name: Install Moonwave
+              run: npm i -g moonwave@0.3.4
+            - name: Build Docs
+              run: moonwave build
+            - name: Deploy Docs
+              uses: s0/git-publish-subdir-action@develop
+              env:
+                  REPO: self
+                  BRANCH: gh-pages
+                  FOLDER: build
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
