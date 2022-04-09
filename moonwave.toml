@@ -3,4 +3,5 @@ enabled = true
 includeReadme = false
 
 [docusaurus]
+organizationName = "Minstrix"
 tagline = "Easily bridge client-server communication"
