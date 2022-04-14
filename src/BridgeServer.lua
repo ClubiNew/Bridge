@@ -67,7 +67,7 @@ ServicesFolder.Name = "Services"
     .Construct function?
     .Deploy function?
     .... Signal | function | any
-    Remotes and methods within the `Bridge` are accessible by clients! The construct function is run during deployment for each service asynchronously. The deploy function is run during deployment for all services synchronously. It is safe to access other controllers after the construct function has run.
+    Remotes and methods within the `.Bridge` are accessible by clients! The construct function is run during deployment for each service asynchronously. The deploy function is run during deployment for all services synchronously. It is safe to access other controllers after the construct function has run.
 ]=]
 
 --[=[

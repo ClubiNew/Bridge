@@ -1,6 +1,9 @@
 --[=[
     @class Remote
-    Remotes allow you to send signals from the server to the client. They can be created in the bridge of a service, for example:
+    Remotes allow you to send signals from the server to the client. They can be created using `Bridge.newRemote()`.
+    :::caution
+    Remotes can **only** be created server-side in the `.Bridge` of a [service](/api/BridgeServer#Service).
+    :::
     ```lua
     local ReplicatedStorage = game:GetService("ReplicatedStorage")
     local Bridge = require(ReplicatedStorage.Bridge)
@@ -87,6 +90,9 @@ end
     @param f function
     @return RBXScriptConnection
     Connect the remote to the provided function.
+    :::note
+    Both [services](/api/BridgeServer#Service) and [controllers](/api/BridgeClient#Controller) can connect to remotes! If the remote is fired for a specific client, that client will be passed as the first argument to any connected services.
+    :::
 ]=]
 function Remote:Connect(f)
     return self.BindableEvent.Event:Connect(f)
@@ -97,6 +103,9 @@ end
     @within Remote
     @return any
     Waits for the remote to be fired and returns the arguments it was fired with.
+    :::note
+    Both [services](/api/BridgeServer#Service) and [controllers](/api/BridgeClient#Controller) can wait on remotes! If the remote is fired for a specific client, that client will be passed as the first argument to any connected services.
+    :::
 ]=]
 function Remote:Wait()
     return self.BindableEvent.Event:Wait()

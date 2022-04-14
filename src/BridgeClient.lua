@@ -89,7 +89,7 @@ end
     @within BridgeClient
     @param serviceName string
     @return Service
-    Use to access the remotes and methods within the Bridge of a service. Safe to call immediately, but may yield if the server has not finished deploying.
+    Used to access the remotes and methods within the `.Bridge` of a service. Safe to call immediately, but may yield if the server has not finished deploying.
 ]=]
 function Bridge.toService(serviceName: string)
     assert(typeof(serviceName) == "string", "[BRIDGE] Expected service name to be a string, got " .. typeof(serviceName) .. ".")
