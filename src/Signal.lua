@@ -1,6 +1,9 @@
 --[=[
     @class Signal
-    Signals allow you to send events in-between controllers or signals, but not from services to controllers or vice-versa. They can be created using `Bridge.newSignal()`, for example:
+    Signals allow you to easily send events in-between scripts. They can be created using `Bridge.newSignal()`.
+    :::caution
+    Unlike [remotes](/api/Remote), signals do **not** cross the client/server boundary.
+    :::
     ```lua
     local ReplicatedStorage = game:GetService("ReplicatedStorage")
     local Bridge = require(ReplicatedStorage.Bridge)
