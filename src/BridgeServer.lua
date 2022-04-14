@@ -352,8 +352,11 @@ function Bridge.deploy(verbose: boolean?)
             if verbose then
                 print("\t\t⤷ Constructing", serviceName)
             end
+
+            debug.setmemorycategory(serviceName .. "_Construct")
             Service.Service:Construct()
             Service.Service.Construct = nil
+            debug.resetmemorycategory()
         end
     end
 
@@ -369,8 +372,12 @@ function Bridge.deploy(verbose: boolean?)
             if verbose then
                 print("\t\t⤷ Deploying", serviceName)
             end
-            task.spawn(Service.Service.Deploy, Service.Service)
-            Service.Service.Deploy = nil
+
+            task.spawn(function()
+                debug.setmemorycategory(serviceName .. "_Deploy")
+                Service.Service:Deploy()
+                Service.Service.Deploy = nil
+            end)
         end
     end
 

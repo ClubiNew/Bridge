@@ -242,8 +242,11 @@ function Bridge.deploy(verbose: boolean?)
             if verbose then
                 print("\t\t⤷ Constructing", controllerName)
             end
+
+            debug.setmemorycategory(controllerName .. "_Construct")
             Controller.Controller:Construct()
             Controller.Controller.Construct = nil
+            debug.resetmemorycategory()
         end
     end
 
@@ -259,8 +262,12 @@ function Bridge.deploy(verbose: boolean?)
             if verbose then
                 print("\t\t⤷ Deploying", controllerName)
             end
-            task.spawn(Controller.Controller.Deploy, Controller.Controller)
-            Controller.Controller.Deploy = nil
+
+            task.spawn(function()
+                debug.setmemorycategory(controllerName .. "_Deploy")
+                Controller.Controller:Deploy()
+                Controller.Controller.Deploy = nil
+            end)
         end
     end
 
