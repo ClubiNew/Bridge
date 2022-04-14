@@ -1,6 +1,6 @@
 # Adds debug memory category methods to selene lint
 
-[debug.setmemorycategory.args]
+[[debug.setmemorycategory.args]]
 type = "string"
 
 [debug.resetmemorycategory]
