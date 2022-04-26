@@ -10,32 +10,35 @@ local Remote = require(script.Parent:WaitForChild("Remote"))
     @class BridgeServer
     @server
 ]=]
-local Bridge = {
-    newSignal = Signal.new;
-    newRemote = Remote.new;
-    MiddlewarePriorities = {
-        UniversalFirst = newproxy(true);
-        UniversalLast = newproxy(true);
-    };
-}
+local BridgeServer = {}
 
 --[=[
     @function newSignal
     @within BridgeServer
     @return Signal
 ]=]
+BridgeServer.newSignal = Signal.new;
 
 --[=[
     @function newRemote
     @within BridgeServer
     @return Remote
 ]=]
+BridgeServer.newRemote = Remote.new;
+
+--[=[
+    @type MiddlewarePriority userdata
+    @within BridgeServer
+    One of [`Bridge.MiddlewarePriorities`](/api/BridgeServer#MiddlewarePriorities). Passed as an argument in [`Bridge.newService()`](/api/BridgeServer#newService).
+]=]
+type MiddlewarePriority = userdata
 
 --[=[
     @interface MiddlewarePriorities
     @within BridgeServer
-    .UniversalFirst userdata
-    .UniversalLast userdata
+    .UniversalFirst MiddlewarePriority
+    .UniversalLast MiddlewarePriority
+    Use `UniversalFirst` to have universal middleware run before client/server middleware and `UniversalLast` to have client/server middleware run before universal middleware. Defaults to `UniversalFirst` if not specified.
 ]=]
 
 --[=[
@@ -43,6 +46,10 @@ local Bridge = {
     @within BridgeServer
     @readonly
 ]=]
+BridgeServer.MiddlewarePriorities = {
+    UniversalFirst = newproxy(true);
+    UniversalLast = newproxy(true);
+};
 
 --[=[
     @prop isReady boolean
@@ -50,7 +57,7 @@ local Bridge = {
     @readonly
     If `true`, Bridge has deployed and services can be accessed. If `false`, services are not yet accessible.
 ]=]
-Bridge.isReady = false
+BridgeServer.isReady = false
 
 --[=[
     @prop Ready Signal
@@ -61,7 +68,7 @@ Bridge.isReady = false
     This Signal is destroyed after Bridge deploys. It is recommended to first check [`Bridge.isReady`](/api/BridgeServer#isReady).
     :::
 ]=]
-Bridge.Ready = Signal.new()
+BridgeServer.Ready = Signal.new()
 
 local Services = {}
 
@@ -88,20 +95,20 @@ ServicesFolder.Name = "Services"
     @param MiddlewarePriority MiddlewarePriority?
     @return Service
 ]=]
-function Bridge.newService(name: string, MiddlewarePriority: userdata?)
+function BridgeServer.newService(name: string, MiddlewarePriority: MiddlewarePriority?)
     assert(typeof(name) == "string", "[BRIDGE] Expected name to be a string, got " .. typeof(name) .. ".")
 
     if Services[name] then
         error("[BRIDGE] There is already a service called " .. name .. "!")
     end
 
-    if Bridge.isReady then
+    if BridgeServer.isReady then
         error("[BRIDGE] Cannot add new services after Bridge has deployed!")
     end
 
     Services[name] = {
         MiddlewarePriority =
-            MiddlewarePriority or Bridge.MiddlewarePriorities.UniversalFirst;
+            MiddlewarePriority or BridgeServer.MiddlewarePriorities.UniversalFirst;
         InboundMiddleware = {
             Universal = {};
             Server = {};
@@ -125,12 +132,12 @@ end
     @within BridgeServer
     @param serviceName string
     @return Service
-    Get another service to access it's methods. Must run `BridgeServer.Deploy()` first.
+    Get another service to access it's methods. Must run [`BridgeServer.deploy()`](/api/BridgeServer#deploy) first.
 ]=]
-function Bridge.toService(serviceName: string)
+function BridgeServer.toService(serviceName: string)
     assert(typeof(serviceName) == "string", "[BRIDGE] Expected service name to be a string, got " .. typeof(serviceName) .. ".")
     assert(Services[serviceName], "[BRIDGE] Service '" .. serviceName .. "' does not exist!")
-    assert(Bridge.isReady, "[BRIDGE] Cannot access services before Bridge deploys!")
+    assert(BridgeServer.isReady, "[BRIDGE] Cannot access services before Bridge deploys!")
     return Services[serviceName].Service
 end
 
@@ -155,7 +162,7 @@ end
     @param middleware MiddlewareFunction
     Add global inbound middleware, which will run before any method of any service is called. Note that global inbound middleware always runs first.
 ]=]
-function Bridge.addGlobalInboundMiddleware(middleware)
+function BridgeServer.addGlobalInboundMiddleware(middleware)
     assert(typeof(middleware) == "function", "[BRIDGE] Expected middleware to be a function, got " .. typeof(middleware) .. ".")
     table.insert(GlobalInboundMiddleware, middleware)
 end
@@ -166,7 +173,7 @@ end
     @param middleware MiddlewareFunction
     Add global outbound middleware, which will run after any method of any service is called. Note that global outbound middleware always runs last.
 ]=]
-function Bridge.addGlobalOutboundMiddleware(middleware)
+function BridgeServer.addGlobalOutboundMiddleware(middleware)
     assert(typeof(middleware) == "function", "[BRIDGE] Expected middleware to be a function, got " .. typeof(middleware) .. ".")
     table.insert(GlobalOutboundMiddleware, middleware)
 end
@@ -178,7 +185,7 @@ end
     @param middleware MiddlewareFunction
     Add universal inbound middleware to the provided service, which will run before any method of that service is called.
 ]=]
-function Bridge.addInboundMiddleware(Service, middleware)
+function BridgeServer.addInboundMiddleware(Service, middleware)
     assert(typeof(middleware) == "function", "[BRIDGE] Expected middleware to be a function, got " .. typeof(middleware) .. ".")
     table.insert(getServiceMetatable(Service).InboundMiddleware.Universal, middleware)
 end
@@ -190,7 +197,7 @@ end
     @param middleware MiddlewareFunction
     Add client inbound middleware to the provided service, which will run before any client method of that service is called.
 ]=]
-function Bridge.addInboundClientMiddleware(Service, middleware)
+function BridgeServer.addInboundClientMiddleware(Service, middleware)
     assert(typeof(middleware) == "function", "[BRIDGE] Expected middleware to be a function, got " .. typeof(middleware) .. ".")
     table.insert(getServiceMetatable(Service).InboundMiddleware.Client, middleware)
 end
@@ -202,7 +209,7 @@ end
     @param middleware MiddlewareFunction
     Add server inbound middleware to the provided service, which will run before any server method of that service is called.
 ]=]
-function Bridge.addInboundServerMiddleware(Service, middleware)
+function BridgeServer.addInboundServerMiddleware(Service, middleware)
     assert(typeof(middleware) == "function", "[BRIDGE] Expected middleware to be a function, got " .. typeof(middleware) .. ".")
     table.insert(getServiceMetatable(Service).InboundMiddleware.Server, middleware)
 end
@@ -214,7 +221,7 @@ end
     @param middleware MiddlewareFunction
     Add universal outbound middleware to the provided service, which will run after any method of that service is called.
 ]=]
-function Bridge.addOutboundMiddleware(Service, middleware)
+function BridgeServer.addOutboundMiddleware(Service, middleware)
     assert(typeof(middleware) == "function", "[BRIDGE] Expected middleware to be a function, got " .. typeof(middleware) .. ".")
     table.insert(getServiceMetatable(Service).OutboundMiddleware.Universal, middleware)
 end
@@ -226,7 +233,7 @@ end
     @param middleware MiddlewareFunction
     Add client outbound middleware to the provided service, which will run after any client method of that service is called.
 ]=]
-function Bridge.addOutboundClientMiddleware(Service, middleware)
+function BridgeServer.addOutboundClientMiddleware(Service, middleware)
     assert(typeof(middleware) == "function", "[BRIDGE] Expected middleware to be a function, got " .. typeof(middleware) .. ".")
     table.insert(getServiceMetatable(Service).OutboundMiddleware.Client, middleware)
 end
@@ -238,7 +245,7 @@ end
     @param middleware MiddlewareFunction
     Add server outbound middleware to the provided service, which will run after any server method of that service is called.
 ]=]
-function Bridge.addOutboundServerMiddleware(Service, middleware)
+function BridgeServer.addOutboundServerMiddleware(Service, middleware)
     assert(typeof(middleware) == "function", "[BRIDGE] Expected middleware to be a function, got " .. typeof(middleware) .. ".")
     table.insert(getServiceMetatable(Service).OutboundMiddleware.Server, middleware)
 end
@@ -261,7 +268,7 @@ end
     @param verbose boolean?
     Initialize, construct and deploy all services.
 ]=]
-function Bridge.deploy(verbose: boolean?)
+function BridgeServer.deploy(verbose: boolean?)
     if verbose then
         print("[BRIDGE] Initializing services...")
     end
@@ -276,7 +283,7 @@ function Bridge.deploy(verbose: boolean?)
                 Service.Service[index] = function(_, ...)
                     local args = runMiddleware(GlobalInboundMiddleware, "inbound", serviceName, index, table.pack(...))
 
-                    if Service.MiddlewarePriority == Bridge.MiddlewarePriorities.UniversalFirst then
+                    if Service.MiddlewarePriority == BridgeServer.MiddlewarePriorities.UniversalFirst then
                         args = runMiddleware(Service.InboundMiddleware.Universal, "inbound", serviceName, index, args)
                         args = runMiddleware(Service.InboundMiddleware.Server, "inbound", serviceName, index, args)
                     else
@@ -286,7 +293,7 @@ function Bridge.deploy(verbose: boolean?)
 
                     local result = table.pack(value(Service.Service, table.unpack(args)))
 
-                    if Service.MiddlewarePriority == Bridge.MiddlewarePriorities.UniversalFirst then
+                    if Service.MiddlewarePriority == BridgeServer.MiddlewarePriorities.UniversalFirst then
                         result = runMiddleware(Service.OutboundMiddleware.Universal, "outbound", serviceName, index, result)
                         result = runMiddleware(Service.OutboundMiddleware.Server, "outbound", serviceName, index, result)
                     else
@@ -305,7 +312,7 @@ function Bridge.deploy(verbose: boolean?)
                             local serviceNameBridge = serviceName .. "'s Bridge"
                             local args = runMiddleware(GlobalInboundMiddleware, "inbound", serviceNameBridge, methodName, table.pack(...))
 
-                            if Service.MiddlewarePriority == Bridge.MiddlewarePriorities.UniversalFirst then
+                            if Service.MiddlewarePriority == BridgeServer.MiddlewarePriorities.UniversalFirst then
                                 args = runMiddleware(Service.InboundMiddleware.Universal, "inbound", serviceNameBridge, methodName, args)
                                 args = runMiddleware(Service.InboundMiddleware.Client, "inbound", serviceNameBridge, methodName, args)
                             else
@@ -315,7 +322,7 @@ function Bridge.deploy(verbose: boolean?)
 
                             local result = table.pack(method(Service.Service, table.unpack(args)))
 
-                            if Service.MiddlewarePriority == Bridge.MiddlewarePriorities.UniversalFirst then
+                            if Service.MiddlewarePriority == BridgeServer.MiddlewarePriorities.UniversalFirst then
                                 result = runMiddleware(Service.OutboundMiddleware.Universal, "outbound", serviceNameBridge, methodName, result)
                                 result = runMiddleware(Service.OutboundMiddleware.Client, "outbound", serviceNameBridge, methodName, result)
                             else
@@ -373,9 +380,9 @@ function Bridge.deploy(verbose: boolean?)
         print("[BRIDGE] Deploying services...")
     end
 
-    Bridge.isReady = true
-    Bridge.Ready:Fire()
-    Bridge.Ready:Destroy()
+    BridgeServer.isReady = true
+    BridgeServer.Ready:Fire()
+    BridgeServer.Ready:Destroy()
 
     for serviceName, Service in pairs(Services) do
         if Service.Service.Deploy then
@@ -391,4 +398,4 @@ function Bridge.deploy(verbose: boolean?)
     print("[BRIDGE] Finished deploying!")
 end
 
-return Bridge
+return BridgeServer
