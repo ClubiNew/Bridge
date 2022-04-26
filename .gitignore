@@ -2,3 +2,4 @@ roblox.toml
 Packages/
 build/
 .vscode/
+*.rbxm
