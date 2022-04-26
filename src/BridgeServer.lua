@@ -45,17 +45,28 @@ local Bridge = {
 ]=]
 
 --[=[
-    @type MiddlewarePriority userdata
+    @prop isReady boolean
     @within BridgeServer
-    One of `BridgeServer.MiddlewarePriorities`. Use `UniversalFirst` to have universal middleware run before client/server middleware and `UniversalLast` to have client/server middleware run before universal middleware. Defaults to `UniversalFirst` if not specified.
+    @readonly
+    If `true`, Bridge has deployed and services can be accessed. If `false`, services are not yet accessible.
 ]=]
+Bridge.isReady = false
+
+--[=[
+    @prop Ready Signal
+    @within BridgeServer
+    @readonly
+    Fires when Bridge deploys and is ready for services to be accessed.
+    :::caution
+    This Signal is destroyed after Bridge deploys. It is recommended to first check [`Bridge.isReady`](/api/BridgeServer#isReady).
+    :::
+]=]
+Bridge.Ready = Signal.new()
 
 local Services = {}
 
 local GlobalInboundMiddleware = {}
 local GlobalOutboundMiddleware = {}
-
-local isDeployed = false
 
 local ServicesFolder = Instance.new("Folder")
 ServicesFolder.Name = "Services"
@@ -84,7 +95,7 @@ function Bridge.newService(name: string, MiddlewarePriority: userdata?)
         error("[BRIDGE] There is already a service called " .. name .. "!")
     end
 
-    if isDeployed then
+    if Bridge.isReady then
         error("[BRIDGE] Cannot add new services after Bridge has deployed!")
     end
 
@@ -119,7 +130,7 @@ end
 function Bridge.toService(serviceName: string)
     assert(typeof(serviceName) == "string", "[BRIDGE] Expected service name to be a string, got " .. typeof(serviceName) .. ".")
     assert(Services[serviceName], "[BRIDGE] Service '" .. serviceName .. "' does not exist!")
-    assert(isDeployed, "[BRIDGE] Cannot access services before Bridge deploys!")
+    assert(Bridge.isReady, "[BRIDGE] Cannot access services before Bridge deploys!")
     return Services[serviceName].Service
 end
 
@@ -362,7 +373,9 @@ function Bridge.deploy(verbose: boolean?)
         print("[BRIDGE] Deploying services...")
     end
 
-    isDeployed = true
+    Bridge.isReady = true
+    Bridge.Ready:Fire()
+    Bridge.Ready:Destroy()
 
     for serviceName, Service in pairs(Services) do
         if Service.Service.Deploy then
@@ -374,7 +387,7 @@ function Bridge.deploy(verbose: boolean?)
         end
     end
 
-    script.Parent:SetAttribute("ServerDeployed", true)
+    script.Parent:SetAttribute("ServerReady", true)
     print("[BRIDGE] Finished deploying!")
 end
 

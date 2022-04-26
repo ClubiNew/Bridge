@@ -19,13 +19,30 @@ local Bridge = {
     @return Signal
 ]=]
 
+--[=[
+    @property isReady boolean
+    @within BridgeClient
+    @readonly
+    If `true`, Bridge has deployed and controllers can be accessed. If `false`, controllers are not yet accessible.
+]=]
+Bridge.isReady = false
+
+--[=[
+    @property Ready Signal
+    @within BridgeClient
+    @readonly
+    Fires when Bridge deploys and is ready for controllers to be accessed.
+    :::caution
+    This Signal is destroyed after Bridge deploys. It is recommended to first check [`Bridge.isReady`](/api/BridgeClient#isReady).
+    :::
+]=]
+Bridge.Ready = Signal.new()
+
 local Controllers = {}
 local Services = {}
 
 local GlobalInboundMiddleware = {}
 local GlobalOutboundMiddleware = {}
-
-local isDeployed = false
 
 --[=[
     @interface Controller
@@ -49,7 +66,7 @@ function Bridge.newController(name: string)
         error("[BRIDGE] There is already a controller called " .. name .. "!")
     end
 
-    if isDeployed then
+    if Bridge.isReady then
         error("[BRIDGE] Cannot add new controllers after Bridge has deployed!")
     end
 
@@ -74,7 +91,7 @@ end
 function Bridge.toController(controllerName: string)
     assert(typeof(controllerName) == "string", "[BRIDGE] Expected controller name to be a string, got " .. typeof(controllerName) .. ".")
     assert(Controllers[controllerName], "[BRIDGE] Controller '" .. controllerName .. "' does not exist!")
-    assert(isDeployed, "[BRIDGE] Cannot access controllers before Bridge deploys!")
+    assert(Bridge.isReady, "[BRIDGE] Cannot access controllers before Bridge deploys!")
     return Controllers[controllerName].Controller
 end
 
@@ -96,8 +113,8 @@ function Bridge.toService(serviceName: string)
 
     if Services[serviceName] then
         return Services[serviceName]
-    elseif not script.Parent:GetAttribute("ServerDeployed") then
-        script.Parent:GetAttributeChangedSignal("ServerDeployed"):Wait()
+    elseif not script.Parent:GetAttribute("ServerReady") then
+        script.Parent:GetAttributeChangedSignal("ServerReady"):Wait()
     end
 
     local serviceFolder = script.Parent.Services:FindFirstChild(serviceName)
@@ -252,7 +269,9 @@ function Bridge.deploy(verbose: boolean?)
         print("[BRIDGE] Deploying controllers...")
     end
 
-    isDeployed = true
+    Bridge.isReady = true
+    Bridge.Ready:Fire()
+    Bridge.Ready:Destroy()
 
     for controllerName, Controller in pairs(Controllers) do
         if Controller.Controller.Deploy then
