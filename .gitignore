@@ -1,4 +1,4 @@
 roblox.toml
-/Packages
-/build
-/.vscode
+Packages/
+build/
+.vscode/

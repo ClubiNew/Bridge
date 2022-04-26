@@ -85,7 +85,7 @@ ServicesFolder.Name = "Services"
     .Construct function?
     .Deploy function?
     .... Signal | function | any
-    Remotes and methods within the `Bridge` are accessible by clients! The construct function is run during deployment for each service asynchronously. The deploy function is run during deployment for all services synchronously. It is safe to access other controllers after the construct function has run.
+    Remotes and methods within the `.Bridge` are accessible by clients! The construct function is run during deployment for each service asynchronously. The deploy function is run during deployment for all services synchronously. It is safe to access other controllers after the construct function has run.
 ]=]
 
 --[=[
@@ -370,8 +370,11 @@ function BridgeServer.deploy(verbose: boolean?)
             if verbose then
                 print("\t\t⤷ Constructing", serviceName)
             end
+
+            debug.setmemorycategory(serviceName .. "_Construct")
             Service.Service:Construct()
             Service.Service.Construct = nil
+            debug.resetmemorycategory()
         end
     end
 
@@ -389,8 +392,12 @@ function BridgeServer.deploy(verbose: boolean?)
             if verbose then
                 print("\t\t⤷ Deploying", serviceName)
             end
-            task.spawn(Service.Service.Deploy, Service.Service)
-            Service.Service.Deploy = nil
+
+            task.spawn(function()
+                debug.setmemorycategory(serviceName .. "_Deploy")
+                Service.Service:Deploy()
+                Service.Service.Deploy = nil
+            end)
         end
     end
 
