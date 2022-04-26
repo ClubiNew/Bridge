@@ -19,7 +19,7 @@ local BridgeClient = {}
 BridgeClient.newSignal = Signal.new;
 
 --[=[
-    @property isReady boolean
+    @prop isReady boolean
     @within BridgeClient
     @readonly
     If `true`, Bridge has deployed and controllers can be accessed. If `false`, controllers are not yet accessible.
@@ -27,7 +27,7 @@ BridgeClient.newSignal = Signal.new;
 BridgeClient.isReady = false
 
 --[=[
-    @property Ready Signal
+    @prop Ready Signal
     @within BridgeClient
     @readonly
     Fires when Bridge deploys and is ready for controllers to be accessed.
