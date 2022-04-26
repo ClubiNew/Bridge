@@ -9,23 +9,39 @@ local Signal = require(script.Parent:WaitForChild("Signal"))
     @class BridgeClient
     @client
 ]=]
-local Bridge = {
-    newSignal = Signal.new;
-}
+local BridgeClient = {}
 
 --[=[
     @function newSignal
     @within BridgeClient
     @return Signal
 ]=]
+BridgeClient.newSignal = Signal.new;
+
+--[=[
+    @prop isReady boolean
+    @within BridgeClient
+    @readonly
+    If `true`, Bridge has deployed and controllers can be accessed. If `false`, controllers are not yet accessible.
+]=]
+BridgeClient.isReady = false
+
+--[=[
+    @prop Ready Signal
+    @within BridgeClient
+    @readonly
+    Fires when Bridge deploys and is ready for controllers to be accessed.
+    :::caution
+    This Signal is destroyed after Bridge deploys. It is recommended to first check [`Bridge.isReady`](/api/BridgeClient#isReady).
+    :::
+]=]
+BridgeClient.Ready = Signal.new()
 
 local Controllers = {}
 local Services = {}
 
 local GlobalInboundMiddleware = {}
 local GlobalOutboundMiddleware = {}
-
-local isDeployed = false
 
 --[=[
     @interface Controller
@@ -42,14 +58,14 @@ local isDeployed = false
     @param name string
     @return Controller
 ]=]
-function Bridge.newController(name: string)
+function BridgeClient.newController(name: string)
     assert(typeof(name) == "string", "[BRIDGE] Expected name to be a string, got " .. typeof(name) .. ".")
 
     if Controllers[name] then
         error("[BRIDGE] There is already a controller called " .. name .. "!")
     end
 
-    if isDeployed then
+    if BridgeClient.isReady then
         error("[BRIDGE] Cannot add new controllers after Bridge has deployed!")
     end
 
@@ -69,12 +85,12 @@ end
     @within BridgeClient
     @param controllerName string
     @return Controller
-    Get another controller to access it's methods. Must run `BridgeClient.Deploy()` first.
+    Get another controller to access it's methods. Must run [`BridgeClient.deploy()`](/api/BridgeClient#deploy) first.
 ]=]
-function Bridge.toController(controllerName: string)
+function BridgeClient.toController(controllerName: string)
     assert(typeof(controllerName) == "string", "[BRIDGE] Expected controller name to be a string, got " .. typeof(controllerName) .. ".")
     assert(Controllers[controllerName], "[BRIDGE] Controller '" .. controllerName .. "' does not exist!")
-    assert(isDeployed, "[BRIDGE] Cannot access controllers before Bridge deploys!")
+    assert(BridgeClient.isReady, "[BRIDGE] Cannot access controllers before Bridge deploys!")
     return Controllers[controllerName].Controller
 end
 
@@ -91,13 +107,13 @@ end
     @return Service
     Used to access the remotes and methods within the `.Bridge` of a service. Safe to call immediately, but may yield if the server has not finished deploying.
 ]=]
-function Bridge.toService(serviceName: string)
+function BridgeClient.toService(serviceName: string)
     assert(typeof(serviceName) == "string", "[BRIDGE] Expected service name to be a string, got " .. typeof(serviceName) .. ".")
 
     if Services[serviceName] then
         return Services[serviceName]
-    elseif not script.Parent:GetAttribute("ServerDeployed") then
-        script.Parent:GetAttributeChangedSignal("ServerDeployed"):Wait()
+    elseif not script.Parent:GetAttribute("ServerReady") then
+        script.Parent:GetAttributeChangedSignal("ServerReady"):Wait()
     end
 
     local serviceFolder = script.Parent.Services:FindFirstChild(serviceName)
@@ -149,7 +165,7 @@ end
     @param middleware MiddlewareFunction
     Add global inbound middleware, which will run before any method of any controller is called. Note that global inbound middleware always runs first.
 ]=]
-function Bridge.addGlobalInboundMiddleware(middleware)
+function BridgeClient.addGlobalInboundMiddleware(middleware)
     assert(typeof(middleware) == "function", "[BRIDGE] Expected middleware to be a function, got " .. typeof(middleware) .. ".")
     table.insert(GlobalInboundMiddleware, middleware)
 end
@@ -160,7 +176,7 @@ end
     @param middleware MiddlewareFunction
     Add global outbound middleware, which will run after any method of any controller is called. Note that global outbound middleware always runs last.
 ]=]
-function Bridge.addGlobalOutboundMiddleware(middleware)
+function BridgeClient.addGlobalOutboundMiddleware(middleware)
     assert(typeof(middleware) == "function", "[BRIDGE] Expected middleware to be a function, got " .. typeof(middleware) .. ".")
     table.insert(GlobalOutboundMiddleware, middleware)
 end
@@ -172,7 +188,7 @@ end
     @param middleware MiddlewareFunction
     Add inbound middleware to the provided controller, which will run before any method of that controller is called.
 ]=]
-function Bridge.addInboundMiddleware(Controller, middleware)
+function BridgeClient.addInboundMiddleware(Controller, middleware)
     assert(typeof(middleware) == "function", "[BRIDGE] Expected middleware to be a function, got " .. typeof(middleware) .. ".")
     table.insert(getControllerMetatable(Controller).InboundMiddleware, middleware)
 end
@@ -184,7 +200,7 @@ end
     @param middleware MiddlewareFunction
     Add outbound middleware to the provided controller, which will run after any method of that controller is called.
 ]=]
-function Bridge.addOutboundMiddleware(Controller, middleware)
+function BridgeClient.addOutboundMiddleware(Controller, middleware)
     assert(typeof(middleware) == "function", "[BRIDGE] Expected middleware to be a function, got " .. typeof(middleware) .. ".")
     table.insert(getControllerMetatable(Controller).OutboundMiddleware, middleware)
 end
@@ -207,7 +223,7 @@ end
     @param verbose boolean?
     Initialize, construct and deploy all controllers.
 ]=]
-function Bridge.deploy(verbose: boolean?)
+function BridgeClient.deploy(verbose: boolean?)
     if verbose then
         print("[BRIDGE] Initializing controllers...")
     end
@@ -255,7 +271,9 @@ function Bridge.deploy(verbose: boolean?)
         print("[BRIDGE] Deploying controllers...")
     end
 
-    isDeployed = true
+    BridgeClient.isReady = true
+    BridgeClient.Ready:Fire()
+    BridgeClient.Ready:Destroy()
 
     for controllerName, Controller in pairs(Controllers) do
         if Controller.Controller.Deploy then
@@ -274,4 +292,4 @@ function Bridge.deploy(verbose: boolean?)
     print("[BRIDGE] Finished deploying!")
 end
 
-return Bridge
+return BridgeClient
