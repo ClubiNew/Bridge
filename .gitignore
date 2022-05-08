@@ -1,5 +1,13 @@
+# Selene
 roblox.toml
+
+# Wally
 Packages/
+wally.lock
+
+# Moonwave
 build/
+
+# Misc.
 .vscode/
 *.rbxm

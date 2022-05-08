@@ -1,7 +1,11 @@
 [package]
 name = "minstrix/bridge"
-version = "0.1.5"
+version = "0.2.0"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 license = "MIT"
 authors = ["Minstrix <minstrix@outlook.com>"]
+
+[dependencies]
+Signal = "sleitnick/signal@1.2.0"
+Janitor = "howmanysmall/janitor@^1.14.1"
