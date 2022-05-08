@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="generator" content="Docusaurus v2.0.0-beta.9">
+<title data-react-helmet="true">HookManager | Bridge</title><meta data-react-helmet="true" property="og:title" content="HookManager | Bridge"><meta data-react-helmet="true" name="twitter:card" content="summary_large_image"><meta data-react-helmet="true" name="description" content="The hook manager allows you to create new [hooks](/api/HookManager#Hook).
+```lua
+local ReplicatedStorage = game:GetService(&quot;ReplicatedStorage&quot;)
+local Bridge = require(ReplicatedStorage.Packages.Bridge)
+
+local PartHook = {}
+
+function PartHook:Attach()
+    print(self.Instance, &quot;got added!&quot;)
+
+    local debounce = false
+    self.Janitor:Add(self.Instance.Touched:Connect(function()
+        if not debounce then
+            debounce = true
+            self.Instance.BrickColor = BrickColor.Random()
+            task.wait(0.1)
+            debounce = false
+        end
+    end))
+
+    self.Janitor:Add(function()
+        print(self.Instance, &quot;got removed!&quot;)
+    end)
+end
+
+Bridge.Hooks.add(&quot;PartHook&quot;, PartHook)
+```"><meta data-react-helmet="true" property="og:description" content="The hook manager allows you to create new [hooks](/api/HookManager#Hook).
+```lua
+local ReplicatedStorage = game:GetService(&quot;ReplicatedStorage&quot;)
+local Bridge = require(ReplicatedStorage.Packages.Bridge)
+
+local PartHook = {}
+
+function PartHook:Attach()
+    print(self.Instance, &quot;got added!&quot;)
+
+    local debounce = false
+    self.Janitor:Add(self.Instance.Touched:Connect(function()
+        if not debounce then
+            debounce = true
+            self.Instance.BrickColor = BrickColor.Random()
+            task.wait(0.1)
+            debounce = false
+        end
+    end))
+
+    self.Janitor:Add(function()
+        print(self.Instance, &quot;got removed!&quot;)
+    end)
+end
+
+Bridge.Hooks.add(&quot;PartHook&quot;, PartHook)
+```"><meta data-react-helmet="true" property="og:url" content="https://Minstrix.github.io/Bridge/api/HookManager"><meta data-react-helmet="true" name="docusaurus_locale" content="en"><meta data-react-helmet="true" name="docusaurus_tag" content="default"><link data-react-helmet="true" rel="canonical" href="https://Minstrix.github.io/Bridge/api/HookManager"><link data-react-helmet="true" rel="alternate" href="https://Minstrix.github.io/Bridge/api/HookManager" hreflang="en"><link data-react-helmet="true" rel="alternate" href="https://Minstrix.github.io/Bridge/api/HookManager" hreflang="x-default"><link rel="stylesheet" href="/Bridge/assets/css/styles.302001c7.css">
+<link rel="preload" href="/Bridge/assets/js/runtime~main.7b123774.js" as="script">
+<link rel="preload" href="/Bridge/assets/js/main.2395ed4a.js" as="script">
+</head>
+<body>
+<script>!function(){function e(e){document.documentElement.setAttribute("data-theme",e)}var t=function(){var e=null;try{e=localStorage.getItem("theme")}catch(e){}return e}();null!==t?e(t):window.matchMedia("(prefers-color-scheme: dark)").matches?e("dark"):(window.matchMedia("(prefers-color-scheme: light)").matches,e("light"))}()</script><div id="__docusaurus">
+<div><a href="#" class="skipToContent_1oUP">Skip to main content</a></div><nav class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Navigation bar toggle" class="navbar__toggle clean-btn" type="button" tabindex="0"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/Bridge/"><b class="navbar__title">Bridge</b></a><a class="navbar__item navbar__link" href="/Bridge/docs/intro">Docs</a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/Bridge/api/">API</a></div><div class="navbar__items navbar__items--right"><a href="https://github.com/ClubiNew/Bridge" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link"><span>GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_3J9K"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></span></a><div class="toggle_71bT toggle_3Zt9 toggleDisabled_3cF-"><div class="toggleTrack_32Fl" role="button" tabindex="-1"><div class="toggleTrackCheck_3lV7"><span class="toggleIcon_O4iE">🌜</span></div><div class="toggleTrackX_S2yS"><span class="toggleIcon_O4iE">🌞</span></div><div class="toggleTrackThumb_xI_Z"></div></div><input type="checkbox" class="toggleScreenReader_28Tw" aria-label="Switch between dark and light mode"></div><div class="navbar__search"><span aria-label="expand searchbar" role="button" class="search-icon" tabindex="0"></span><input type="search" id="search_input_react" placeholder="Press S to Search..." aria-label="Search" class="navbar__search-input search-bar"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div class="main-wrapper docPageContainer_2Kz0"><div class="docPage_1bdk"><div class="docSidebarContainer_1ykS"><div class="sidebar_15mo"><nav class="menu thin-scrollbar menu_Bmed"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/Bridge/api/Bridge">​Bridge</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/Bridge/api/HookManager">​Hook​Manager</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/Bridge/api/MiddlewareManager">​Middleware​Manager</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/Bridge/api/ServiceManager">​Service​Manager</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/Bridge/api/Utilities">​Utilities</a></li></ul></nav><button type="button" title="Collapse sidebar" aria-label="Collapse sidebar" class="button button--secondary button--outline collapseSidebarButton_1CGd"><svg width="20" height="20" aria-hidden="true" class="collapseSidebarButtonIcon_3E-R"><g fill="#7a7a7a"><path d="M9.992 10.023c0 .2-.062.399-.172.547l-4.996 7.492a.982.982 0 01-.828.454H1c-.55 0-1-.453-1-1 0-.2.059-.403.168-.551l4.629-6.942L.168 3.078A.939.939 0 010 2.528c0-.548.45-.997 1-.997h2.996c.352 0 .649.18.828.45L9.82 9.472c.11.148.172.347.172.55zm0 0"></path><path d="M19.98 10.023c0 .2-.058.399-.168.547l-4.996 7.492a.987.987 0 01-.828.454h-3c-.547 0-.996-.453-.996-1 0-.2.059-.403.168-.551l4.625-6.942-4.625-6.945a.939.939 0 01-.168-.55 1 1 0 01.996-.997h3c.348 0 .649.18.828.45l4.996 7.492c.11.148.168.347.168.55zm0 0"></path></g></svg></button></div></div><main class="docMainContainer_28N5"><div class="container padding-vert--lg"><div class="row"><div class="col docItemCol_3WPG"><div class="docItemContainer_3XDu"><article><div class="member_qHIL markdown"><div class="tocCollapsible_1PrD theme-doc-toc-mobile tocMobile_3ryM"><button type="button" class="clean-btn tocCollapsibleButton_2O1e">On this page</button></div><header><h1 class="docTitle_1ddc" style="text-decoration:none"><span style="display:inline-block">Hook</span><span style="display:inline-block">Manager</span></h1><div class="luaClassTags_2Zrs"></div><div>
+<p>The hook manager allows you to create new <a href="/Bridge/api/HookManager#Hook">hooks</a>.</p>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> ReplicatedStorage <span class="token operator">=</span> game<span class="token punctuation">:</span><span class="token function">GetService</span><span class="token punctuation">(</span><span class="token string">"ReplicatedStorage"</span><span class="token punctuation">)</span>
+<span class="token keyword">local</span> Bridge <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>ReplicatedStorage<span class="token punctuation">.</span>Packages<span class="token punctuation">.</span>Bridge<span class="token punctuation">)</span>
+
+<span class="token keyword">local</span> PartHook <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+
+<span class="token keyword">function</span> PartHook<span class="token punctuation">:</span><span class="token function">Attach</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token function">print</span><span class="token punctuation">(</span>self<span class="token punctuation">.</span>Instance<span class="token punctuation">,</span> <span class="token string">"got added!"</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">local</span> debounce <span class="token operator">=</span> <span class="token keyword">false</span>
+    self<span class="token punctuation">.</span>Janitor<span class="token punctuation">:</span><span class="token function">Add</span><span class="token punctuation">(</span>self<span class="token punctuation">.</span>Instance<span class="token punctuation">.</span>Touched<span class="token punctuation">:</span><span class="token function">Connect</span><span class="token punctuation">(</span><span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token keyword">if</span> <span class="token keyword">not</span> debounce <span class="token keyword">then</span>
+            debounce <span class="token operator">=</span> <span class="token keyword">true</span>
+            self<span class="token punctuation">.</span>Instance<span class="token punctuation">.</span>BrickColor <span class="token operator">=</span> BrickColor<span class="token punctuation">.</span><span class="token function">Random</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+            task<span class="token punctuation">.</span><span class="token function">wait</span><span class="token punctuation">(</span><span class="token number">0.1</span><span class="token punctuation">)</span>
+            debounce <span class="token operator">=</span> <span class="token keyword">false</span>
+        <span class="token keyword">end</span>
+    <span class="token keyword">end</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+    self<span class="token punctuation">.</span>Janitor<span class="token punctuation">:</span><span class="token function">Add</span><span class="token punctuation">(</span><span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token function">print</span><span class="token punctuation">(</span>self<span class="token punctuation">.</span>Instance<span class="token punctuation">,</span> <span class="token string">"got removed!"</span><span class="token punctuation">)</span>
+    <span class="token keyword">end</span><span class="token punctuation">)</span>
+<span class="token keyword">end</span>
+
+Bridge<span class="token punctuation">.</span>Hooks<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token string">"PartHook"</span><span class="token punctuation">,</span> PartHook<span class="token punctuation">)</span>
+</code></pre>
+</div></header><h2 class="anchor anchorWithStickyNavbar_31ik" id="types">Types<a aria-hidden="true" class="hash-link" href="#types" title="Direct link to heading">​</a></h2><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="Hook"><code style="text-decoration:none">Hook</code><a aria-hidden="true" class="hash-link" href="#Hook" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/ClubiNew/Bridge/blob/master/src/HookManager.lua#L48"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code class="purple__nFc">interface</code> <code>Hook<!-- --> <!-- -->{</code><div class="inset_2cJr"><div><code>Attach<!-- -->: </code><code class="purple__nFc">(</code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Bridge/api/HookManager#Hook">Hook</a></code><code class="purple__nFc">)</code><code class="purple__nFc"> → </code><code class="purple__nFc">(</code><code class="purple__nFc">)</code></div><div><code>Janitor<!-- -->: </code><code class="blue_2Afy">Janitor</code></div><div><code>Instance<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/datatype/Instance" target="_blank" rel="noopener noreferrer">Instance<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code></div><div><code>...<!-- -->: </code><code class="blue_2Afy">any</code></div></div><code>}</code></div><div>
+<p>Hooks are used to bind to <a href="https://developer.roblox.com/en-us/api-reference/class/CollectionService" target="_blank">CollectionService</a> tags. When the tag specified in <a href="/Bridge/api/HookManager#add"><code>HookManager.add()</code></a> is added to an instance, a new copy of the Hook is created, the <code>Instance</code> and <a href="https://howmanysmall.github.io/Janitor/api/Janitor" target="_blank"><code>Janitor</code></a> properties are set, and the <code>Attach</code> method is called. When the instance is removed, the <a href="https://howmanysmall.github.io/Janitor/api/Janitor" target="_blank"><code>Janitor</code></a>'s clean-up method will be called.</p>
+<p>See the <a href="https://howmanysmall.github.io/Janitor/api/Janitor" target="_blank">Janitor docs</a> for more information on using Janitors.</p>
+</div><h2 class="anchor anchorWithStickyNavbar_31ik" id="functions">Functions<a aria-hidden="true" class="hash-link" href="#functions" title="Direct link to heading">​</a></h2><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="add"><code style="text-decoration:none">add</code><a aria-hidden="true" class="hash-link" href="#add" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/ClubiNew/Bridge/blob/master/src/HookManager.lua#L62"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>HookManager<!-- -->.</code><code class="green_3LnD">add</code><code>(</code><div class="inset_2cJr"><div><code>collectionTag<!-- -->: </code><code class="blue_2Afy">string</code><code>,</code></div><div><code>hook<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Bridge/api/HookManager#Hook">Hook</a></code></div></div><code>) → </code><code>(</code><code>)</code></div><div>
+<p>Adds a new hook for the provided class and <a href="https://developer.roblox.com/en-us/api-reference/class/CollectionService" target="_blank">CollectionService</a> tag.</p>
+<div class="admonition admonition-note alert alert--secondary">
+  <div class="admonition-heading">
+    <h5><span class="admonition-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="16" viewBox="0 0 14 16">
+          <path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path>
+        </svg></span>note</h5>
+  </div>
+  <div class="admonition-content">
+    <p>It is recommended that you use <code>script.Name</code> as your collection tag.</p>
+  </div>
+</div>
+</div></div></article></div><details><summary>Show raw api</summary><pre style="max-width:100%;white-space:pre-wrap">{
+    &quot;functions&quot;: [
+        {
+            &quot;name&quot;: &quot;add&quot;,
+            &quot;desc&quot;: &quot;Adds a new hook for the provided class and [CollectionService](https://developer.roblox.com/en-us/api-reference/class/CollectionService) tag.\n:::note\nIt is recommended that you use `script.Name` as your collection tag.\n:::&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;collectionTag&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;string&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;hook&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Hook&quot;
+                }
+            ],
+            &quot;returns&quot;: [],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 62,
+                &quot;path&quot;: &quot;src/HookManager.lua&quot;
+            }
+        }
+    ],
+    &quot;properties&quot;: [],
+    &quot;types&quot;: [
+        {
+            &quot;name&quot;: &quot;Hook&quot;,
+            &quot;desc&quot;: &quot;Hooks are used to bind to [CollectionService](https://developer.roblox.com/en-us/api-reference/class/CollectionService) tags. When the tag specified in [`HookManager.add()`](/api/HookManager#add) is added to an instance, a new copy of the Hook is created, the `Instance` and [`Janitor`](https://howmanysmall.github.io/Janitor/api/Janitor) properties are set, and the `Attach` method is called. When the instance is removed, the [`Janitor`](https://howmanysmall.github.io/Janitor/api/Janitor)&#x27;s clean-up method will be called.\n\nSee the [Janitor docs](https://howmanysmall.github.io/Janitor/api/Janitor) for more information on using Janitors.&quot;,
+            &quot;fields&quot;: [
+                {
+                    &quot;name&quot;: &quot;Attach&quot;,
+                    &quot;lua_type&quot;: &quot;(Hook) -&gt; ()&quot;,
+                    &quot;desc&quot;: &quot;&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;Janitor&quot;,
+                    &quot;lua_type&quot;: &quot;Janitor&quot;,
+                    &quot;desc&quot;: &quot;&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;Instance&quot;,
+                    &quot;lua_type&quot;: &quot;Instance&quot;,
+                    &quot;desc&quot;: &quot;&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;...&quot;,
+                    &quot;lua_type&quot;: &quot;any&quot;,
+                    &quot;desc&quot;: &quot;&quot;
+                }
+            ],
+            &quot;source&quot;: {
+                &quot;line&quot;: 48,
+                &quot;path&quot;: &quot;src/HookManager.lua&quot;
+            }
+        }
+    ],
+    &quot;name&quot;: &quot;HookManager&quot;,
+    &quot;desc&quot;: &quot;The hook manager allows you to create new [hooks](/api/HookManager#Hook).\n```lua\nlocal ReplicatedStorage = game:GetService(\&quot;ReplicatedStorage\&quot;)\nlocal Bridge = require(ReplicatedStorage.Packages.Bridge)\n\nlocal PartHook = {}\n\nfunction PartHook:Attach()\n    print(self.Instance, \&quot;got added!\&quot;)\n\n    local debounce = false\n    self.Janitor:Add(self.Instance.Touched:Connect(function()\n        if not debounce then\n            debounce = true\n            self.Instance.BrickColor = BrickColor.Random()\n            task.wait(0.1)\n            debounce = false\n        end\n    end))\n\n    self.Janitor:Add(function()\n        print(self.Instance, \&quot;got removed!\&quot;)\n    end)\nend\n\nBridge.Hooks.add(\&quot;PartHook\&quot;, PartHook)\n```&quot;,
+    &quot;source&quot;: {
+        &quot;line&quot;: 31,
+        &quot;path&quot;: &quot;src/HookManager.lua&quot;
+    }
+}</pre></details></div><div class="col col--3"><div class="tableOfContents_35-E thin-scrollbar"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#types" class="table-of-contents__link toc-highlight">Types</a><ul><li><a href="#Hook" class="table-of-contents__link toc-highlight">Hook</a></li></ul></li><li><a href="#properties" class="table-of-contents__link toc-highlight">Properties</a></li><li><a href="#functions" class="table-of-contents__link toc-highlight">Functions</a><ul><li><a href="#add" class="table-of-contents__link toc-highlight">.add</a></li></ul></li></ul></div></div></div></div></main></div></div><footer class="footer footer--dark"><div class="container"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2022 Minstrix. Built with Moonwave and Docusaurus.</div></div></div></footer></div>
+<script src="/Bridge/assets/js/runtime~main.7b123774.js"></script>
+<script src="/Bridge/assets/js/main.2395ed4a.js"></script>
+</body>
+</html>

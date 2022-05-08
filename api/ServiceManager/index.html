@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="generator" content="Docusaurus v2.0.0-beta.9">
+<title data-react-helmet="true">ServiceManager | Bridge</title><meta data-react-helmet="true" property="og:title" content="ServiceManager | Bridge"><meta data-react-helmet="true" name="twitter:card" content="summary_large_image"><meta data-react-helmet="true" name="description" content="The service manager allows you to create new [services](/api/ServiceManager#Service).
+```lua
+local ReplicatedStorage = game:GetService(&quot;ReplicatedStorage&quot;)
+local Bridge = require(ReplicatedStorage.Packages.Bridge)
+
+-- In ServiceA.lua
+
+local ServiceA = {}
+
+function ServiceA:OnInit()
+    print(&quot;Initialized!&quot;)
+    self.SomeVariable = &quot;Some string&quot;
+end
+
+function ServiceA:OnStart()
+    print(&quot;Started!&quot;)
+end
+
+function ServiceA:SomeMethod()
+    print(self.SomeVariable)
+end
+
+Bridge.Services.add(&quot;ServiceA&quot;, ServiceA)
+
+-- In ServiceB.lua
+
+local ServiceB = {}
+
+function ServiceB:OnInit()
+    print(&quot;Initialized!&quot;)
+end
+
+function ServiceB:OnStart()
+    print(&quot;Started!&quot;)
+
+    local ServiceA = Bridge.Services.get(&quot;ServiceA&quot;)
+    ServiceA:SomeMethod() --&gt; &quot;Some string&quot;
+end
+
+Bridge.Services.add(&quot;ServiceB&quot;, ServiceB)
+
+-- In a script
+
+Bridge.Services.start()
+```"><meta data-react-helmet="true" property="og:description" content="The service manager allows you to create new [services](/api/ServiceManager#Service).
+```lua
+local ReplicatedStorage = game:GetService(&quot;ReplicatedStorage&quot;)
+local Bridge = require(ReplicatedStorage.Packages.Bridge)
+
+-- In ServiceA.lua
+
+local ServiceA = {}
+
+function ServiceA:OnInit()
+    print(&quot;Initialized!&quot;)
+    self.SomeVariable = &quot;Some string&quot;
+end
+
+function ServiceA:OnStart()
+    print(&quot;Started!&quot;)
+end
+
+function ServiceA:SomeMethod()
+    print(self.SomeVariable)
+end
+
+Bridge.Services.add(&quot;ServiceA&quot;, ServiceA)
+
+-- In ServiceB.lua
+
+local ServiceB = {}
+
+function ServiceB:OnInit()
+    print(&quot;Initialized!&quot;)
+end
+
+function ServiceB:OnStart()
+    print(&quot;Started!&quot;)
+
+    local ServiceA = Bridge.Services.get(&quot;ServiceA&quot;)
+    ServiceA:SomeMethod() --&gt; &quot;Some string&quot;
+end
+
+Bridge.Services.add(&quot;ServiceB&quot;, ServiceB)
+
+-- In a script
+
+Bridge.Services.start()
+```"><meta data-react-helmet="true" property="og:url" content="https://Minstrix.github.io/Bridge/api/ServiceManager"><meta data-react-helmet="true" name="docusaurus_locale" content="en"><meta data-react-helmet="true" name="docusaurus_tag" content="default"><link data-react-helmet="true" rel="canonical" href="https://Minstrix.github.io/Bridge/api/ServiceManager"><link data-react-helmet="true" rel="alternate" href="https://Minstrix.github.io/Bridge/api/ServiceManager" hreflang="en"><link data-react-helmet="true" rel="alternate" href="https://Minstrix.github.io/Bridge/api/ServiceManager" hreflang="x-default"><link rel="stylesheet" href="/Bridge/assets/css/styles.302001c7.css">
+<link rel="preload" href="/Bridge/assets/js/runtime~main.7b123774.js" as="script">
+<link rel="preload" href="/Bridge/assets/js/main.2395ed4a.js" as="script">
+</head>
+<body>
+<script>!function(){function e(e){document.documentElement.setAttribute("data-theme",e)}var t=function(){var e=null;try{e=localStorage.getItem("theme")}catch(e){}return e}();null!==t?e(t):window.matchMedia("(prefers-color-scheme: dark)").matches?e("dark"):(window.matchMedia("(prefers-color-scheme: light)").matches,e("light"))}()</script><div id="__docusaurus">
+<div><a href="#" class="skipToContent_1oUP">Skip to main content</a></div><nav class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Navigation bar toggle" class="navbar__toggle clean-btn" type="button" tabindex="0"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/Bridge/"><b class="navbar__title">Bridge</b></a><a class="navbar__item navbar__link" href="/Bridge/docs/intro">Docs</a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/Bridge/api/">API</a></div><div class="navbar__items navbar__items--right"><a href="https://github.com/ClubiNew/Bridge" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link"><span>GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_3J9K"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></span></a><div class="toggle_71bT toggle_3Zt9 toggleDisabled_3cF-"><div class="toggleTrack_32Fl" role="button" tabindex="-1"><div class="toggleTrackCheck_3lV7"><span class="toggleIcon_O4iE">🌜</span></div><div class="toggleTrackX_S2yS"><span class="toggleIcon_O4iE">🌞</span></div><div class="toggleTrackThumb_xI_Z"></div></div><input type="checkbox" class="toggleScreenReader_28Tw" aria-label="Switch between dark and light mode"></div><div class="navbar__search"><span aria-label="expand searchbar" role="button" class="search-icon" tabindex="0"></span><input type="search" id="search_input_react" placeholder="Press S to Search..." aria-label="Search" class="navbar__search-input search-bar"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div class="main-wrapper docPageContainer_2Kz0"><div class="docPage_1bdk"><div class="docSidebarContainer_1ykS"><div class="sidebar_15mo"><nav class="menu thin-scrollbar menu_Bmed"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/Bridge/api/Bridge">​Bridge</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/Bridge/api/HookManager">​Hook​Manager</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/Bridge/api/MiddlewareManager">​Middleware​Manager</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/Bridge/api/ServiceManager">​Service​Manager</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/Bridge/api/Utilities">​Utilities</a></li></ul></nav><button type="button" title="Collapse sidebar" aria-label="Collapse sidebar" class="button button--secondary button--outline collapseSidebarButton_1CGd"><svg width="20" height="20" aria-hidden="true" class="collapseSidebarButtonIcon_3E-R"><g fill="#7a7a7a"><path d="M9.992 10.023c0 .2-.062.399-.172.547l-4.996 7.492a.982.982 0 01-.828.454H1c-.55 0-1-.453-1-1 0-.2.059-.403.168-.551l4.629-6.942L.168 3.078A.939.939 0 010 2.528c0-.548.45-.997 1-.997h2.996c.352 0 .649.18.828.45L9.82 9.472c.11.148.172.347.172.55zm0 0"></path><path d="M19.98 10.023c0 .2-.058.399-.168.547l-4.996 7.492a.987.987 0 01-.828.454h-3c-.547 0-.996-.453-.996-1 0-.2.059-.403.168-.551l4.625-6.942-4.625-6.945a.939.939 0 01-.168-.55 1 1 0 01.996-.997h3c.348 0 .649.18.828.45l4.996 7.492c.11.148.168.347.168.55zm0 0"></path></g></svg></button></div></div><main class="docMainContainer_28N5"><div class="container padding-vert--lg"><div class="row"><div class="col docItemCol_3WPG"><div class="docItemContainer_3XDu"><article><div class="member_qHIL markdown"><div class="tocCollapsible_1PrD theme-doc-toc-mobile tocMobile_3ryM"><button type="button" class="clean-btn tocCollapsibleButton_2O1e">On this page</button></div><header><h1 class="docTitle_1ddc" style="text-decoration:none"><span style="display:inline-block">Service</span><span style="display:inline-block">Manager</span></h1><div class="luaClassTags_2Zrs"></div><div>
+<p>The service manager allows you to create new <a href="/Bridge/api/ServiceManager#Service">services</a>.</p>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> ReplicatedStorage <span class="token operator">=</span> game<span class="token punctuation">:</span><span class="token function">GetService</span><span class="token punctuation">(</span><span class="token string">"ReplicatedStorage"</span><span class="token punctuation">)</span>
+<span class="token keyword">local</span> Bridge <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span>ReplicatedStorage<span class="token punctuation">.</span>Packages<span class="token punctuation">.</span>Bridge<span class="token punctuation">)</span>
+
+<span class="token comment">-- In ServiceA.lua</span>
+
+<span class="token keyword">local</span> ServiceA <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+
+<span class="token keyword">function</span> ServiceA<span class="token punctuation">:</span><span class="token function">OnInit</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token function">print</span><span class="token punctuation">(</span><span class="token string">"Initialized!"</span><span class="token punctuation">)</span>
+    self<span class="token punctuation">.</span>SomeVariable <span class="token operator">=</span> <span class="token string">"Some string"</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">function</span> ServiceA<span class="token punctuation">:</span><span class="token function">OnStart</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token function">print</span><span class="token punctuation">(</span><span class="token string">"Started!"</span><span class="token punctuation">)</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">function</span> ServiceA<span class="token punctuation">:</span><span class="token function">SomeMethod</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token function">print</span><span class="token punctuation">(</span>self<span class="token punctuation">.</span>SomeVariable<span class="token punctuation">)</span>
+<span class="token keyword">end</span>
+
+Bridge<span class="token punctuation">.</span>Services<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token string">"ServiceA"</span><span class="token punctuation">,</span> ServiceA<span class="token punctuation">)</span>
+
+<span class="token comment">-- In ServiceB.lua</span>
+
+<span class="token keyword">local</span> ServiceB <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+
+<span class="token keyword">function</span> ServiceB<span class="token punctuation">:</span><span class="token function">OnInit</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token function">print</span><span class="token punctuation">(</span><span class="token string">"Initialized!"</span><span class="token punctuation">)</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">function</span> ServiceB<span class="token punctuation">:</span><span class="token function">OnStart</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token function">print</span><span class="token punctuation">(</span><span class="token string">"Started!"</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">local</span> ServiceA <span class="token operator">=</span> Bridge<span class="token punctuation">.</span>Services<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">"ServiceA"</span><span class="token punctuation">)</span>
+    ServiceA<span class="token punctuation">:</span><span class="token function">SomeMethod</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment">--> "Some string"</span>
+<span class="token keyword">end</span>
+
+Bridge<span class="token punctuation">.</span>Services<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token string">"ServiceB"</span><span class="token punctuation">,</span> ServiceB<span class="token punctuation">)</span>
+
+<span class="token comment">-- In a script</span>
+
+Bridge<span class="token punctuation">.</span>Services<span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre>
+</div></header><h2 class="anchor anchorWithStickyNavbar_31ik" id="types">Types<a aria-hidden="true" class="hash-link" href="#types" title="Direct link to heading">​</a></h2><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="Service"><code style="text-decoration:none">Service</code><a aria-hidden="true" class="hash-link" href="#Service" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/ClubiNew/Bridge/blob/master/src/ServiceManager.lua#L69"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code class="purple__nFc">interface</code> <code>Service<!-- --> <!-- -->{</code><div class="inset_2cJr"><div><code>OnInit<!-- -->: </code><code class="purple__nFc">(</code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Bridge/api/ServiceManager#Service">Service</a></code><code class="purple__nFc">)</code><code class="purple__nFc"> → </code><code class="purple__nFc">(</code><code class="purple__nFc">)</code><code class="op_1JtD"> | </code><code class="blue_2Afy">nil</code></div><div><code>OnStart<!-- -->: </code><code class="purple__nFc">(</code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Bridge/api/ServiceManager#Service">Service</a></code><code class="purple__nFc">)</code><code class="purple__nFc"> → </code><code class="purple__nFc">(</code><code class="purple__nFc">)</code><code class="op_1JtD"> | </code><code class="blue_2Afy">nil</code></div><div><code>...<!-- -->: </code><code class="blue_2Afy">any</code></div></div><code>}</code></div><div>
+<p>Services are essentially just tables with two optional <a href="/Bridge/docs/lifecycle">life cycle methods</a>. As such, you can store anything in them that could go in a normal table.</p>
+<div class="admonition admonition-note alert alert--secondary">
+  <div class="admonition-heading">
+    <h5><span class="admonition-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="16" viewBox="0 0 14 16">
+          <path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path>
+        </svg></span>note</h5>
+  </div>
+  <div class="admonition-content">
+    <p>If you do not need either life cycle method, it is recommended you use a standard module instead of a service.</p>
+  </div>
+</div>
+</div><h2 class="anchor anchorWithStickyNavbar_31ik" id="functions">Functions<a aria-hidden="true" class="hash-link" href="#functions" title="Direct link to heading">​</a></h2><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="add"><code style="text-decoration:none">add</code><a aria-hidden="true" class="hash-link" href="#add" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/ClubiNew/Bridge/blob/master/src/ServiceManager.lua#L84"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>ServiceManager<!-- -->.</code><code class="green_3LnD">add</code><code>(</code><div class="inset_2cJr"><div><code>serviceName<!-- -->: </code><code class="blue_2Afy">string</code><code>,</code></div><div><code>service<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Bridge/api/ServiceManager#Service">Service</a></code></div></div><code>) → </code><code>(</code><code>)</code></div><div>
+<div class="admonition admonition-note alert alert--secondary">
+  <div class="admonition-heading">
+    <h5><span class="admonition-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="16" viewBox="0 0 14 16">
+          <path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"></path>
+        </svg></span>note</h5>
+  </div>
+  <div class="admonition-content">
+    <p>It is recommended that you use <code>script.Name</code> as your service name.</p>
+  </div>
+</div>
+</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="get"><code style="text-decoration:none">get</code><a aria-hidden="true" class="hash-link" href="#get" title="Direct link to heading">​</a></h3><span class="badge_3ZFo" style="color:#f1c40f"><span class="badgeTooltip_2qiw">This is a yielding function. When called, it will pause the Lua thread that called the function until a result is ready to be returned, without interrupting other scripts.</span><span class="badgeToolTipTail_2yaQ"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="#f1c40f" role="img" aria-label="This is a yielding function. When called, it will pause the Lua thread that called the function until a result is ready to be returned, without interrupting other scripts."><path d="M96.4 11.9c-1.4-2.5-4-4-6.9-4H10.8c-2.9 0-5.4 1.5-6.9 4-1.4 2.5-1.4 5.5 0 7.9L43.3 88c1.4 2.5 4 4 6.9 4 2.9 0 5.4-1.5 6.9-4l39.3-68.2c1.4-2.4 1.4-5.4 0-7.9zM46.3 54.5c1.1-1.1 2.3-1.6 3.8-1.6s2.8.5 3.8 1.6c1.1 1.1 1.6 2.3 1.6 3.8s-.5 2.8-1.6 3.8c-1.1 1.1-2.3 1.6-3.8 1.6s-2.8-.5-3.8-1.6c-1.1-1.1-1.6-2.3-1.6-3.8.1-1.5.6-2.8 1.6-3.8zm-.5-4.9V21.8h8.8v27.8h-8.8z"></path></svg> <!-- -->Yields</span></span><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/ClubiNew/Bridge/blob/master/src/ServiceManager.lua#L100"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>ServiceManager<!-- -->.</code><code class="green_3LnD">get</code><code>(</code><code>serviceName<!-- -->: </code><code class="blue_2Afy">string</code><code>) → </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Bridge/api/ServiceManager#Service">Service</a></code></div><div>
+<div class="admonition admonition-caution alert alert--warning">
+  <div class="admonition-heading">
+    <h5><span class="admonition-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+          <path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"></path>
+        </svg></span>caution</h5>
+  </div>
+  <div class="admonition-content">
+    <p>This method will yield until <a href="/Bridge/api/ServiceManager#start"><code>ServiceManager.start()</code></a> is called and services have initialized. Using it in a service during initialization may cause an infinite yield!</p>
+  </div>
+</div>
+</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="start"><code style="text-decoration:none">start</code><a aria-hidden="true" class="hash-link" href="#start" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/ClubiNew/Bridge/blob/master/src/ServiceManager.lua#L118"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>ServiceManager<!-- -->.</code><code class="green_3LnD">start</code><code>(</code><code>verbose<!-- -->: </code><code class="blue_2Afy">boolean?</code><code>) → </code><code>(</code><code>)</code></div><div>
+<p>Runs all of the service life cycle methods and makes them accessible via <a href="/Bridge/api/ServiceManager#get"><code>ServiceManager.get()</code></a>. Set the <code>verbose</code> parameter to <code>true</code> to print a message as each service is started.</p>
+<div class="admonition admonition-caution alert alert--warning">
+  <div class="admonition-heading">
+    <h5><span class="admonition-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+          <path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"></path>
+        </svg></span>caution</h5>
+  </div>
+  <div class="admonition-content">
+    <p>Once this method has been called, you will not longer be able to <a href="/Bridge/api/ServiceManager#add">add new services</a>!</p>
+  </div>
+</div>
+</div></div></article></div><details><summary>Show raw api</summary><pre style="max-width:100%;white-space:pre-wrap">{
+    &quot;functions&quot;: [
+        {
+            &quot;name&quot;: &quot;add&quot;,
+            &quot;desc&quot;: &quot;:::note\nIt is recommended that you use `script.Name` as your service name.\n:::&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;serviceName&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;string&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;service&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Service&quot;
+                }
+            ],
+            &quot;returns&quot;: [],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 84,
+                &quot;path&quot;: &quot;src/ServiceManager.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;get&quot;,
+            &quot;desc&quot;: &quot;:::caution\nThis method will yield until [`ServiceManager.start()`](/api/ServiceManager#start) is called and services have initialized. Using it in a service during initialization may cause an infinite yield!\n:::&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;serviceName&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;string&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Service&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;yields&quot;: true,
+            &quot;source&quot;: {
+                &quot;line&quot;: 100,
+                &quot;path&quot;: &quot;src/ServiceManager.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;start&quot;,
+            &quot;desc&quot;: &quot;Runs all of the service life cycle methods and makes them accessible via [`ServiceManager.get()`](/api/ServiceManager#get). Set the `verbose` parameter to `true` to print a message as each service is started.\n:::caution\nOnce this method has been called, you will not longer be able to [add new services](/api/ServiceManager#add)!\n:::&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;verbose&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;boolean?&quot;
+                }
+            ],
+            &quot;returns&quot;: [],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 118,
+                &quot;path&quot;: &quot;src/ServiceManager.lua&quot;
+            }
+        }
+    ],
+    &quot;properties&quot;: [],
+    &quot;types&quot;: [
+        {
+            &quot;name&quot;: &quot;Service&quot;,
+            &quot;desc&quot;: &quot;Services are essentially just tables with two optional [life cycle methods](/docs/lifecycle). As such, you can store anything in them that could go in a normal table.\n:::note\nIf you do not need either life cycle method, it is recommended you use a standard module instead of a service.\n:::&quot;,
+            &quot;fields&quot;: [
+                {
+                    &quot;name&quot;: &quot;OnInit&quot;,
+                    &quot;lua_type&quot;: &quot;(Service) -&gt; () | nil&quot;,
+                    &quot;desc&quot;: &quot;&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;OnStart&quot;,
+                    &quot;lua_type&quot;: &quot;(Service) -&gt; () | nil&quot;,
+                    &quot;desc&quot;: &quot;&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;...&quot;,
+                    &quot;lua_type&quot;: &quot;any&quot;,
+                    &quot;desc&quot;: &quot;&quot;
+                }
+            ],
+            &quot;source&quot;: {
+                &quot;line&quot;: 69,
+                &quot;path&quot;: &quot;src/ServiceManager.lua&quot;
+            }
+        }
+    ],
+    &quot;name&quot;: &quot;ServiceManager&quot;,
+    &quot;desc&quot;: &quot;The service manager allows you to create new [services](/api/ServiceManager#Service).\n```lua\nlocal ReplicatedStorage = game:GetService(\&quot;ReplicatedStorage\&quot;)\nlocal Bridge = require(ReplicatedStorage.Packages.Bridge)\n\n-- In ServiceA.lua\n\nlocal ServiceA = {}\n\nfunction ServiceA:OnInit()\n    print(\&quot;Initialized!\&quot;)\n    self.SomeVariable = \&quot;Some string\&quot;\nend\n\nfunction ServiceA:OnStart()\n    print(\&quot;Started!\&quot;)\nend\n\nfunction ServiceA:SomeMethod()\n    print(self.SomeVariable)\nend\n\nBridge.Services.add(\&quot;ServiceA\&quot;, ServiceA)\n\n-- In ServiceB.lua\n\nlocal ServiceB = {}\n\nfunction ServiceB:OnInit()\n    print(\&quot;Initialized!\&quot;)\nend\n\nfunction ServiceB:OnStart()\n    print(\&quot;Started!\&quot;)\n\n    local ServiceA = Bridge.Services.get(\&quot;ServiceA\&quot;)\n    ServiceA:SomeMethod() --&gt; \&quot;Some string\&quot;\nend\n\nBridge.Services.add(\&quot;ServiceB\&quot;, ServiceB)\n\n-- In a script\n\nBridge.Services.start()\n```&quot;,
+    &quot;source&quot;: {
+        &quot;line&quot;: 49,
+        &quot;path&quot;: &quot;src/ServiceManager.lua&quot;
+    }
+}</pre></details></div><div class="col col--3"><div class="tableOfContents_35-E thin-scrollbar"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#types" class="table-of-contents__link toc-highlight">Types</a><ul><li><a href="#Service" class="table-of-contents__link toc-highlight">Service</a></li></ul></li><li><a href="#properties" class="table-of-contents__link toc-highlight">Properties</a></li><li><a href="#functions" class="table-of-contents__link toc-highlight">Functions</a><ul><li><a href="#add" class="table-of-contents__link toc-highlight">.add</a></li><li><a href="#get" class="table-of-contents__link toc-highlight">.get</a></li><li><a href="#start" class="table-of-contents__link toc-highlight">.start</a></li></ul></li></ul></div></div></div></div></main></div></div><footer class="footer footer--dark"><div class="container"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2022 Minstrix. Built with Moonwave and Docusaurus.</div></div></div></footer></div>
+<script src="/Bridge/assets/js/runtime~main.7b123774.js"></script>
+<script src="/Bridge/assets/js/main.2395ed4a.js"></script>
+</body>
+</html>
