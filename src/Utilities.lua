@@ -9,14 +9,14 @@ local Utilities = {}
     @within Utilities
     See the Signal documentation [here](https://sleitnick.github.io/RbxUtil/api/Signal/).
 ]=]
-Utilities.Signal = require(script.Parent.Parent.Parent:WaitForChild("sleitnick_signal@1.2.0"):WaitForChild("signal"))
+Utilities.Signal = require(script.Parent.Parent:WaitForChild("Signal"))
 
 --[=[
     @prop Janitor Janitor
     @within Utilities
     See the Janitor documentation [here](https://howmanysmall.github.io/Janitor/).
 ]=]
-Utilities.Janitor = require(script.Parent.Parent.Parent:WaitForChild("howmanysmall_janitor@1.14.1"):WaitForChild("janitor"))
+Utilities.Janitor = require(script.Parent.Parent:WaitForChild("Janitor"))
 
 table.freeze(Utilities)
 return Utilities
