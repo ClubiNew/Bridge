@@ -4,4 +4,4 @@ includeReadme = false
 
 [docusaurus]
 organizationName = "Minstrix"
-tagline = "Easily bridge client-server communication"
+tagline = "A framework for Roblox game development"
