@@ -1,1 +1,1 @@
-## Please read the [documentation](https://ClubiNew.github.io/Bridge) for more information.
+## Please read the [documentation](https://ClubiNew.github.io/RbxPackages) for more information.

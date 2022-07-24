@@ -1,11 +1,9 @@
 [package]
-name = "minstrix/bridge"
-version = "0.2.1"
+name = "minstrix/hooks"
+version = "0.1.0"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
-license = "MIT"
-authors = ["Minstrix <minstrix@outlook.com>"]
+license = "GNU GPLv3"
 
 [dependencies]
-Signal = "sleitnick/signal@1.2.0"
 Janitor = "howmanysmall/janitor@^1.14.1"

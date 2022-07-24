@@ -1,7 +1,17 @@
+gitSourcebranch = "main"
+
 [home]
 enabled = true
 includeReadme = false
 
 [docusaurus]
 organizationName = "Minstrix"
-tagline = "A framework for Roblox game development"
+tagline = "A collection of utilities for Roblox Developers"
+favicon = "/favicon.ico"
+
+[[classOrder]]
+section = "Tables"
+classes = ["Table", "Array"]
+
+[footer]
+copyright = "Made with ❤️ by Minstrix"

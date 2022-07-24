@@ -2,12 +2,23 @@
 roblox.toml
 
 # Wally
-Packages/
+packages/*/Packages/
+packages/*/ServerPackages/
 wally.lock
+
+# Roblox
+*.rbxl
+*.rbxl.lock
+*.rbxlx
+*.rbxlx.lock
+*.rbxm
+*.rbxmx
 
 # Moonwave
 build/
 
+# System
+.DS_Store
+
 # Misc.
 .vscode/
-*.rbxm

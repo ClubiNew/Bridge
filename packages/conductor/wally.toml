@@ -1,0 +1,9 @@
+[package]
+name = "minstrix/conductor"
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+license = "GNU GPLv3"
+
+[dependencies]
+Signal = "sleitnick/signal@1.2.0"
