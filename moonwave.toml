@@ -1,4 +1,4 @@
-gitSourcebranch = "main"
+gitSourceBranch = "main"
 
 [home]
 enabled = true
