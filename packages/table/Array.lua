@@ -31,9 +31,7 @@
 ]=]
 
 local RNG = Random.new(tick())
-local Table = require(script.Parent)
-
-local Array = setmetatable({}, { __index = Table })
+local Array = setmetatable({}, { __index = require(script.Parent.Generic) })
 
 --[=[
     @tag override
@@ -95,7 +93,7 @@ function Array.slice<T>(array: { T }, numElements: number, fromIndex: number?): 
     local slicedArray: { T } = {}
 
     for index = fromIndex, fromIndex + numElements - 1 do
-        table.insert(slicedArray, table.remove(array, index))
+        table.insert(slicedArray, table.remove(array, fromIndex))
     end
 
     return slicedArray
@@ -196,8 +194,8 @@ function Array.shuffle<T>(array: { T }): { T }
     local shuffledArray: { T } = {}
 
     while #indices > 0 do
-        local randomIndex = RNG:NextInteger(1, #indices)
-        table.insert(array[indices[randomIndex]], table.remove(indices, randomIndex))
+        local randomIndex = table.remove(indices, RNG:NextInteger(1, #indices))
+        table.insert(shuffledArray, array[randomIndex])
     end
 
     return shuffledArray
@@ -220,10 +218,16 @@ end
     ```
 ]=]
 function Array.flatten(array: { any }, deep: boolean?): { any }
-    return Array.foldr(array, {}, function(accumulator, value)
-        if deep and typeof(value) == "table" then
-            for _, subValue in ipairs(Array.flatten(value, deep)) do
-                table.insert(accumulator, subValue)
+    return Array.foldr(array, {}, function(accumulator, _, value)
+        if typeof(value) == "table" then
+            for _, subValue in ipairs(value) do
+                if deep and type(subValue) == "table" then
+                    for _, subSubValue in ipairs(Array.flatten(subValue, deep)) do
+                        table.insert(accumulator, subSubValue)
+                    end
+                else
+                    table.insert(accumulator, subValue)
+                end
             end
         else
             table.insert(accumulator, value)
