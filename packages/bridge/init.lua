@@ -9,6 +9,11 @@
     ```lua
     -- In a server script:
 
+    local function printArgs(...)
+        print(...)
+        return ...
+    end
+
     local function doubleArgs(...)
         local args = table.pack(...)
 
@@ -24,14 +29,13 @@
     local BadMathBridge = Bridge.blueprint({
         name = "BadMath",
         events = {"SomeEvent"},
-        inboundProcessors = {doubleArgs},
-        outboundProcessors = {doubleArgs},
+        inboundProcessors = {printArgs}, --> player, 1, 2
     })
 
-    function BadMathBridge:Add(player, x, y)
-        self.Events.SomeEvent:FireAllClients("Add called!")
+    BadMathBridge.addMethod("Add", function(player, x, y)
+        BadMathBridge.Events.SomeEvent:FireAllClients("Add called!")
         return x + y
-    end
+    end).withInboundProcessors({doubleArgs}).withOutboundProcessors({doubleArgs})
 
     Bridge.construct(BadMathBridge)
 
@@ -52,7 +56,18 @@ local RunService = game:GetService("RunService")
 local Bridge = {}
 local bridges: {
     [string]: {
+        constructed: boolean,
         bridge: Bridge,
+
+        events: { [string]: RemoteEvent },
+        methods: {
+            [string]: {
+                func: (any) -> (any),
+                inboundProcessors: { Processor },
+                outboundProcessors: { Processor },
+            },
+        },
+
         inboundProcessors: { Processor },
         outboundProcessors: { Processor },
     },
@@ -63,18 +78,40 @@ local bridges: {
     @interface Bridge
     @within Bridge
     .Events {string: RemoteEvent}
-    .... (Bridge, any) -> (any)
+    .addMethod (string, (any) -> (any)) -> MethodConstructor
 
-    A bridge is used to allow for communication between the client and server. The `Events` array is created by [Bridge.blueprint] and is available to both the server and clients. Similarly, when [Bridge.construct] is called for a bridge, it will internally create a [RemoteFunction](https://developer.roblox.com/en-us/api-reference/class/RemoteFunction) for any methods on that bridge. The client can then [Bridge.to] that bridge and call the methods on it using the internal [RemoteFunctions](https://developer.roblox.com/en-us/api-reference/class/RemoteFunction).
+    A bridge is used to allow for communication between the client and server. Bridges are made using [Bridge.blueprint] which will automatically create the `Events` array based on the given [Blueprint]. You can then add methods to the Bridge using the `addMethod` function and once all methods have been added, you can [construct](#construct) the Bridge. Clients will then be able to [request](#to) the bridge and call the methods or listen to the events on it.
 
     :::note
-    The intention is that `Events` are fired by the server, but the server can also listen for events being fired by clients if a response is not necessary, but no inbound/outbound processing will take place.
+    The intention is that `Events` are fired by the server, but the server can also listen for events being fired by clients if a response is not necessary.
+    :::
+
+    :::tip
+    Once the Bridge is [constructed](#construct), all of the methods added with `addMethod` will be added to the Bridge's table. This means that methods can call each other, just be aware that there will be no inbound/outbound processing between methods.
     :::
 ]=]
 type Bridge = {
     Events: { [string]: RemoteEvent },
     [any]: (Bridge, any) -> (any),
 }
+
+--[=[
+    @type Processor (any) -> (any)
+    @within Bridge
+
+    A processor is a function that is called either before or after a [Bridge] method is called by the client, with the arguments passed to or returned by the method or previous processor. Processors can either return a tuple of arguments to be used by the method and/or following processor(s), or throw an error to halt the request.
+
+    You can add processors to a [Bridge] in the [Blueprint], or add them to specific methods on a [Bridge] using a [MethodConstructor].
+
+    :::tip
+    Processors will be called in the order they appear in the inbound/outbound arrays. Be mindful that processors return the arguments expected by the next processor(s) in the array.
+    :::
+
+    :::caution
+    Processors are not used for connections to a [RemoteEvent] in the `Events` array of the [Bridge].
+    :::
+]=]
+type Processor = (any) -> (any)
 
 --[=[
     @interface Blueprint
@@ -84,10 +121,14 @@ type Bridge = {
     .inboundProcessors {Processor}
     .outboundProcessors {Processor}
 
-    A blueprint is used to define a [Bridge] when calling [Bridge.blueprint]. Read the [Processor] interface for more information on the inbound/outbound processor arrays.
+    A blueprint is used to define a [Bridge] when calling the [blueprint] method. Read the [Processor] interface for more information on the inbound/outbound processor arrays.
 
     :::tip
     It's recommended to use `script.Name` as the name.
+    :::
+
+    :::caution
+    [Blueprint] inbound processors will always run before inbound processors added to a [MethodConstructor], and [Blueprint] outbound processors will always run after outbound processors added to a [MethodConstructor].
     :::
 ]=]
 type Blueprint = {
@@ -98,20 +139,27 @@ type Blueprint = {
 }
 
 --[=[
-    @type Processor (any) -> (any)
+    @interface MethodConstructor
     @within Bridge
+    .withInboundProcessors ({Processor}) -> MethodConstructor
+    .withOutboundProcessors ({Processor}) -> MethodConstructor
 
-    A processor is a function that is called either before or after a [Bridge] method is called by the client, with the arguments passed to or returned by the method or previous processor. Processors can either return a tuple of arguments to be used by the method and/or following processor(s), or throw an error to halt the request.
-
-    :::tip
-    Processors will be called in the order they appear in the inbound/outbound arrays of the [Blueprint] that is used to define the [Bridge]. Be mindful that processors return the arguments expected by the next processor(s) in the array.
-    :::
+    A method constructor is returned when `addMethod` is called on an un-constructed [Bridge]. You can then use the `withInboundProcessors` and `withOutboundProcessors` functions to add [processors](#Processor) to that method without adding them to the whole [Bridge]. Read the [Processor] interface for more information.
 
     :::caution
-    Processors are not used for connections to a [RemoteEvent] in the `Events` array of the [Bridge].
+    Method-specific processors will always run *after* the [Blueprint] inbound processors and *before* the outbound [Blueprint] processors.
     :::
 ]=]
-type Processor = (any) -> (any)
+type MethodConstructor = {
+    withInboundProcessors: ({ Processor }) -> MethodConstructor,
+    withOutboundProcessors: ({ Processor }) -> MethodConstructor,
+}
+
+local function addProcessors(processors, newProcessors)
+    for _, processor in ipairs(newProcessors) do
+        table.insert(processors, processor)
+    end
+end
 
 --[=[
     @server
@@ -119,45 +167,80 @@ type Processor = (any) -> (any)
 function Bridge.blueprint(blueprint: Blueprint): Bridge
     assert(RunService:IsServer(), "Bridges can only be created by the server!")
     assert(not bridges[blueprint.name], "Cannot have two bridges with the same name!")
-    local newBridge: Bridge = { Events = {} }
+    local bridge: Bridge = { Events = {} }
 
     if blueprint.events then
         for _, eventName in blueprint.events do
-            assert(not newBridge.Events[eventName], "Cannot have two events with the same name!")
-            local RemoteEvent = Instance.new("RemoteEvent")
-            newBridge.Events[eventName] = RemoteEvent
+            assert(not bridge.Events[eventName], "Cannot have two events with the same name!")
+            bridge.Events[eventName] = Instance.new("RemoteEvent")
         end
     end
 
+    table.freeze(bridge.Events)
+
     bridges[blueprint.name] = {
-        bridge = newBridge,
+        constructed = false,
+        bridge = bridge,
+
+        events = bridge.Events,
+        methods = {},
+
         inboundProcessors = blueprint.inboundProcessors or {},
         outboundProcessors = blueprint.outboundProcessors or {},
     }
 
-    return newBridge
+    bridge.addMethod = function(name, func)
+        assert(not bridges[blueprint.name].methods[name], "Cannot have two methods with the same name!")
+
+        local method = {
+            func = func,
+            inboundProcessors = {},
+            outboundProcessors = {},
+        }
+
+        local methodConstructor: MethodConstructor = {}
+
+        methodConstructor.withInboundProcessors = function(newProcessors)
+            addProcessors(method.inboundProcessors, newProcessors)
+            return methodConstructor
+        end
+
+        methodConstructor.withOutboundProcessors = function(newProcessors)
+            addProcessors(method.outboundProcessors, newProcessors)
+            return methodConstructor
+        end
+
+        bridges[blueprint.name].methods[name] = method
+        return methodConstructor
+    end
+
+    return bridge
 end
 
 --[=[
     @server
+
+    Adds the methods to the given [Bridge] and internally creates a [RemoteFunction] for each, making the [Bridge] available to the client.
+
     :::caution
     Once a [Bridge] has been constructed, you can no longer add new methods to it.
     :::
 ]=]
 function Bridge.construct(bridge: Bridge)
     assert(RunService:IsServer(), "Bridges can only be added by the server!")
-    local bridgeName, bridgeInfo
+    local bridgeName, bridgeConfig
 
-    for name, info in bridges do
-        if info.bridge == bridge then
+    for name, config in bridges do
+        if config.bridge == bridge then
             bridgeName = name
-            bridgeInfo = info
+            bridgeConfig = config
             break
         end
     end
 
-    assert(bridgeName and bridgeInfo, "Bridges must be created with Bridge.blueprint()!")
-    assert(not script:FindFirstChild(bridgeName), "Cannot add a bridge more than once!")
+    assert(bridgeName and bridgeConfig, "Bridges must be created with Bridge.blueprint()!")
+    assert(not bridgeConfig.constructed, "Cannot add a bridge more than once!")
+    bridgeConfig.constructed = true
 
     local folder = Instance.new("Folder")
     folder.Name = bridgeName
@@ -165,49 +248,61 @@ function Bridge.construct(bridge: Bridge)
     local eventsFolder = Instance.new("Folder")
     eventsFolder.Name = "Events"
 
-    for remoteName, remoteEvent in pairs(bridge.Events) do
-        remoteEvent.Name = remoteName
+    for eventName, remoteEvent in pairs(bridgeConfig.events) do
+        remoteEvent.Name = eventName
         remoteEvent.Parent = eventsFolder
     end
 
     local functionsFolder = Instance.new("Folder")
     functionsFolder.Name = "Functions"
 
-    for funcName, func in pairs(bridges) do
-        if typeof(func) == "function" then
-            local remoteFunction = Instance.new("RemoteFunction")
-            remoteFunction.Name = funcName
+    for methodName, methodConfig in bridgeConfig.methods do
+        local remoteFunction = Instance.new("RemoteFunction")
+        remoteFunction.Name = methodName
 
-            -- Create processing sequence
-            local processors = {}
-
-            for _, processor in ipairs(bridgeInfo.inboundProcessors) do
-                table.insert(processors, processor)
-            end
-
-            table.insert(processors, func)
-
-            for _, processor in ipairs(bridgeInfo.outboundProcessors) do
-                table.insert(processors, processor)
-            end
-
-            -- Process invocations
-            remoteFunction.OnServerInvoke = function(...)
-                local args = table.pack(...)
-
-                for _, processor in ipairs(processors) do
-                    if processor == func then
-                        args = table.pack(func(bridge, table.unpack(args)))
-                    else
-                        args = table.pack(processor(table.unpack(args)))
-                    end
-                end
-
-                return table.unpack(args)
-            end
-
-            remoteFunction.Parent = functionsFolder
+        if bridge[methodName] then
+            warn(
+                "Method '"
+                    .. methodName
+                    .. "' was not added to the Bridge's table, as it would overwrite an existing field!"
+            )
+        else
+            bridge[methodName] = methodConfig.func
         end
+
+        -- Create processing sequence
+        local processors = {}
+
+        for _, processor in ipairs(bridgeConfig.inboundProcessors) do
+            table.insert(processors, processor)
+        end
+
+        for _, processor in ipairs(methodConfig.inboundProcessors) do
+            table.insert(processors, processor)
+        end
+
+        table.insert(processors, methodConfig.func)
+
+        for _, processor in ipairs(methodConfig.outboundProcessors) do
+            table.insert(processors, processor)
+        end
+
+        for _, processor in ipairs(bridgeConfig.outboundProcessors) do
+            table.insert(processors, processor)
+        end
+
+        -- Process invocations
+        remoteFunction.OnServerInvoke = function(...)
+            local args = table.pack(...)
+
+            for _, processor in ipairs(processors) do
+                args = table.pack(processor(table.unpack(args)))
+            end
+
+            return table.unpack(args)
+        end
+
+        remoteFunction.Parent = functionsFolder
     end
 
     eventsFolder.Parent = folder
