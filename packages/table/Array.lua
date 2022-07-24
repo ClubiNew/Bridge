@@ -172,16 +172,16 @@ function Array.randomWeighted<T>(array: { T }, weight: (index: number, value: an
     local weights = {}
 
     for index, value in ipairs(array) do
-        local weight = weight(index, value)
-        totalWeights += weight
-        table.insert(weights, totalWeights)
+        local elementWeight = weight(index, value)
+        totalWeights += elementWeight
+        table.insert(weights, elementWeight)
     end
 
     local randomWeight = RNG:NextInteger(1, totalWeights)
     totalWeights = 0
 
-    for index, weight in ipairs(weights) do
-        totalWeights += weight
+    for index, elementWeight in ipairs(weights) do
+        totalWeights += elementWeight
         if totalWeights >= randomWeight then
             return index, array[index]
         end
