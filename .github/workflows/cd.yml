@@ -1,0 +1,57 @@
+name: CD
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  docs:
+    name: Build and publish docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Create Node Environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - name: Install Moonwave
+        run: npm i -g moonwave@0.3.7
+
+      - name: Build and publish docs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+          git config --global user.email "support+actions@github.com"
+          git config --global user.name "github-actions-bot"
+          moonwave build --code packages --publish
+
+  wally:
+    name: Publish to Wally
+    needs: docs # don't publish to wally if docs failed
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        package: [ancestor, bridge, conductor, hooks, table]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Foreman
+        uses: Roblox/setup-foreman@v1
+        with:
+          version: "^1.0.0"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to Wally
+        shell: bash
+        env:
+          WALLY_TOKEN: ${{ secrets.WALLY_TOKEN }}
+          PACKAGE: ${{ matrix.package }}
+        run: |
+          mkdir ~/.wally
+          echo "${WALLY_TOKEN}" > ~/.wally/auth.toml
+          wally publish --project-path ./packages/${PACKAGE}

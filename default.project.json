@@ -1,6 +1,12 @@
 {
-	"name": "Bridge",
-	"tree": {
-		"$path": "src"
-	}
+    "name": "RbxPackages",
+    "tree": {
+        "$className": "DataModel",
+        "ReplicatedStorage": {
+            "$className": "ReplicatedStorage",
+            "Packages": {
+                "$path": "packages"
+            }
+        }
+    }
 }

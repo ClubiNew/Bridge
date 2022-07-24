@@ -4,8 +4,8 @@ sidebar_position: 1
 
 # About
 
-Bridge is a [Roblox](https://roblox.com/) game framework. It has three main features; hooks, services, and middleware.
+RbxPackages is a collection of utility modules designed for use by Roblox Developers.
 
-Hooks are used to bind modules to collection service tags. Services are used for easy life cycles and inter-script communication. Middleware is used to simplify client-server remotes.
+To get started, check out the [installation instructions](/docs/installation) and look through the module documentation in the [API](/API) tab.
 
-You can read more about how each of these work by viewing their respective [API](/api) pages.
+I anticipate this to be a fairly small project so at the moment there is no Discord server setup. If you have any questions feel free to reach out to me in the [Roblox OSS Community](https://discord.gg/CA86WWncsS) Discord or send an email to [minstrix@mindblast.games](mailto:minstrix@mindblast.games) and I would be happy to help.

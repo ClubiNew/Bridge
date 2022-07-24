@@ -1,0 +1,9 @@
+[package]
+name = "minstrix/ancestor"
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+license = "GNU GPLv3"
+
+[dependencies]
+Option = "sleitnick/option@1.0.4"
