@@ -92,7 +92,7 @@ function Array.slice<T>(array: { T }, numElements: number, fromIndex: number?): 
     fromIndex = if fromIndex then fromIndex else 1
     local slicedArray: { T } = {}
 
-    for index = fromIndex, fromIndex + numElements - 1 do
+    for _ = 1, numElements do
         table.insert(slicedArray, table.remove(array, fromIndex))
     end
 
