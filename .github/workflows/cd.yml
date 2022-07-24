@@ -53,5 +53,5 @@ jobs:
           PACKAGE: ${{ matrix.package }}
         run: |
           mkdir ~/.wally
-          echo "${WALLY_TOKEN}" > ~/.wally/auth.toml
-          wally publish --project-path ./packages/${PACKAGE}
+          echo "$WALLY_TOKEN" > ~/.wally/auth.toml
+          wally publish --project-path ./packages/$PACKAGE
